@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 
 export default function Footer() {
@@ -122,6 +124,14 @@ export default function Footer() {
                 >
                   Cookies
                 </a>
+              </li>
+              <li>
+                <button
+                  onClick={() => window.dispatchEvent(new Event('reopenCookieConsent'))}
+                  className="hover:text-flighthour-yellow transition-colors text-left"
+                >
+                  Cookie-Einstellungen
+                </button>
               </li>
             </ul>
           </div>
