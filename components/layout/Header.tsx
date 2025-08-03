@@ -138,6 +138,14 @@ export default function Header() {
             >
               Kontakt
             </Link>
+            <Link
+              href="https://flighthour.de/products/flugsimulator-geschenkgutscheine"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary"
+            >
+              Jetzt schenken
+            </Link>
           </div>
 
           {/* Mobile Menu Button */}
