@@ -6,15 +6,17 @@ import { motion } from 'framer-motion'
 export default function HeroSection() {
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Hintergrundbild-Platzhalter */}
-      <div className="absolute inset-0 bg-gradient-to-br from-flighthour-yellow/20 to-flighthour-black/20 z-0">
-        <div className="absolute inset-0 bg-gray-200 flex items-center justify-center">
-          <p className="text-gray-500 text-center">
-            [Hero-Bild: Glückliches Geburtstagskind im Flugsimulator
-            <br />
-            Emotionales Bild mit strahlendem Gesicht, 1920x1080]
-          </p>
-        </div>
+      {/* YouTube Video Hintergrund */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <div className="absolute inset-0 bg-black/40 z-10" /> {/* Overlay für bessere Lesbarkeit */}
+        <iframe
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[177.77vh] h-[100vh] min-w-full min-h-full max-w-none"
+          src="https://www.youtube.com/embed/r1dTSEm4rjo?autoplay=1&mute=1&loop=1&playlist=r1dTSEm4rjo&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+          title="Flighthour Experience Video"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
       </div>
 
       <div className="container-section relative z-10">
@@ -28,9 +30,9 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-avant-garde font-bold mb-6"
+            className="text-5xl md:text-7xl font-avant-garde font-bold mb-6 text-white drop-shadow-2xl"
           >
-            Das <span className="text-flighthour-yellow">unvergessliche</span>
+            Das <span className="text-flighthour-yellow drop-shadow-2xl">unvergessliche</span>
             <br />
             Geburtstagsgeschenk
           </motion.h1>
@@ -39,7 +41,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-700 mb-8"
+            className="text-xl md:text-2xl text-white mb-8 drop-shadow-lg"
           >
             Schenke ein einzigartiges Flugerlebnis im professionellen Flugsimulator.
             <br />
@@ -71,7 +73,7 @@ export default function HeroSection() {
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 2 }}
-            className="text-gray-600"
+            className="text-white"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
