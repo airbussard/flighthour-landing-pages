@@ -15,7 +15,7 @@ export default function TargetGroupSection() {
       description:
         'Wecke die Begeisterung fürs Fliegen! Ein spannendes Erlebnis, das Technik greifbar macht.',
       features: ['Altersgerechte Einführung', 'Spielerisches Lernen', 'Unvergessliche Momente'],
-      image: '[Bild: Begeisterter Jugendlicher im Cockpit, 800x600]',
+      image: '[800x600]',
     },
     {
       title: 'Für Junggebliebene',
@@ -23,7 +23,7 @@ export default function TargetGroupSection() {
       description:
         'Erfülle dir einen Lebenstraum! Erlebe die Faszination des Fliegens ohne Risiko.',
       features: ['Entspanntes Tempo', 'Professionelle Betreuung', 'Traumerfüllung'],
-      image: '[Bild: Älterer Herr/Dame mit Freude im Simulator, 800x600]',
+      image: '[800x600]',
     },
   ]
 

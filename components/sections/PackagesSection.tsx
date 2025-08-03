@@ -13,8 +13,9 @@ export default function PackagesSection() {
     {
       name: 'Starter',
       duration: '30 Minuten',
-      price: '89€',
+      price: '99,50€',
       features: [
+        'Briefing',
         'Einführung ins Cockpit',
         'Start und Landung',
         'Freie Flugzeugwahl',
@@ -26,31 +27,32 @@ export default function PackagesSection() {
     {
       name: 'Premium',
       duration: '60 Minuten',
-      price: '159€',
+      price: '179€',
       features: [
-        'Ausführliche Einweisung',
+        'Ausführliches Briefing',
+        'Echter Pilot erklärt',
+        'Einführung ins Cockpit',
         'Mehrere Starts & Landungen',
         'Wetterszenarien wählbar',
         'Foto- & Videoaufnahmen',
-        'Getränke inklusive',
       ],
       highlighted: true,
       ctaLink: 'https://flighthour.de/preise#premium',
     },
     {
-      name: 'Deluxe',
-      duration: '90 Minuten',
-      price: '229€',
+      name: "Captain's Experience",
+      duration: '120 Minuten',
+      price: '299€',
       features: [
+        'Ausführliches Briefing',
+        'Echter Pilot erklärt',
         'VIP-Erlebnis',
         'Komplette Flugroute',
         'Nachtflug möglich',
-        'Professionelles Video',
-        'Champagner & Snacks',
-        'Erinnerungsurkunde',
+        'Foto- & Videoaufnahmen',
       ],
       highlighted: false,
-      ctaLink: 'https://flighthour.de/preise#deluxe',
+      ctaLink: 'https://flighthour.de/preise#captains-experience',
     },
   ]
 
@@ -88,7 +90,7 @@ export default function PackagesSection() {
                 </div>
               )}
 
-              <div className="p-8">
+              <div className="p-8 h-full flex flex-col">
                 <div className="text-center mb-6">
                   <h3 className="text-3xl font-avant-garde font-bold mb-2">{pkg.name}</h3>
                   <p className="text-gray-600">{pkg.duration}</p>
@@ -97,7 +99,7 @@ export default function PackagesSection() {
                   </div>
                 </div>
 
-                <ul className="space-y-3 mb-8">
+                <ul className="space-y-3 mb-8 flex-grow">
                   {pkg.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start">
                       <svg
@@ -140,7 +142,7 @@ export default function PackagesSection() {
           className="text-center mt-12"
         >
           <p className="text-gray-600 mb-4">
-            Alle Geschenkgutscheine sind 2 Jahre gültig und flexibel einlösbar.
+            Alle Geschenkgutscheine sind 3 Jahre gültig und flexibel einlösbar.
           </p>
           <Link
             href="https://flighthour.de/kontakt"

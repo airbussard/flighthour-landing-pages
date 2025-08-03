@@ -15,7 +15,7 @@ export default function TestimonialsSection() {
       role: 'hat ihrem Vater geschenkt',
       text: 'Mein Papa war sprachlos! Mit 65 Jahren hat er sich seinen Traum vom Fliegen erfüllt. Die strahlenden Augen werde ich nie vergessen.',
       rating: 5,
-      image: '[Portrait: Lächelnde junge Frau, 400x400]',
+      image: '[400x400]',
     },
     {
       name: 'Familie Weber',
@@ -23,7 +23,7 @@ export default function TestimonialsSection() {
       role: 'für Sohn Tom (12)',
       text: 'Tom redet immer noch von seinem Geburtstag im Flugsimulator. Die Betreuung war super kinderfreundlich und professionell.',
       rating: 5,
-      image: '[Portrait: Glückliche Familie, 400x400]',
+      image: '[400x400]',
     },
     {
       name: 'Marcus K.',
@@ -31,7 +31,7 @@ export default function TestimonialsSection() {
       role: 'Geburtstagsgeschenk von Kollegen',
       text: 'Das beste Geschenk ever! Die Kollegen haben ins Schwarze getroffen. War ein unvergessliches Erlebnis.',
       rating: 5,
-      image: '[Portrait: Mann mittleren Alters, 400x400]',
+      image: '[400x400]',
     },
   ]
 

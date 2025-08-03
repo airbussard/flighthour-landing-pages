@@ -3,6 +3,7 @@ import Footer from '@/components/layout/Footer'
 import HeroSection from '@/components/sections/HeroSection'
 import TargetGroupSection from '@/components/sections/TargetGroupSection'
 import BenefitsSection from '@/components/sections/BenefitsSection'
+import SimulatorSection from '@/components/sections/SimulatorSection'
 import PackagesSection from '@/components/sections/PackagesSection'
 import TestimonialsSection from '@/components/sections/TestimonialsSection'
 import FAQSection from '@/components/sections/FAQSection'
@@ -16,6 +17,7 @@ export default function Home() {
         <HeroSection />
         <TargetGroupSection />
         <BenefitsSection />
+        <SimulatorSection />
         <PackagesSection />
         <TestimonialsSection />
         <FAQSection />

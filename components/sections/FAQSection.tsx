@@ -18,12 +18,12 @@ export default function FAQSection() {
     {
       question: 'Wie lange ist der Gutschein gültig?',
       answer:
-        'Alle Geschenkgutscheine sind 2 Jahre ab Kaufdatum gültig. Eine Verlängerung ist auf Anfrage möglich.',
+        'Alle Geschenkgutscheine sind 3 Jahre ab Kaufdatum gültig. Eine Verlängerung ist auf Anfrage möglich.',
     },
     {
       question: 'Ab welchem Alter kann man den Flugsimulator nutzen?',
       answer:
-        'Kinder ab 8 Jahren können den Flugsimulator nutzen. Nach oben gibt es keine Altersgrenze - wir hatten schon begeisterte 88-jährige Piloten!',
+        'Kinder ab 8 Jahren können den Flugsimulator nutzen. Nach oben gibt es keine Altersgrenze - wir hatten schon begeisterte 90-jährige Piloten!',
     },
     {
       question: 'Sind Vorkenntnisse erforderlich?',
