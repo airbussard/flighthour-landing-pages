@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
+import CounterAnimation from '@/components/ui/CounterAnimation'
 
 export default function CTASection() {
   const ref = useRef(null)
@@ -66,18 +67,39 @@ export default function CTASection() {
             transition={{ duration: 0.6, delay: 0.8 }}
             className="mt-12 flex items-center justify-center space-x-8"
           >
-            <div className="text-center">
-              <div className="text-3xl font-bold">3 Jahre</div>
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.9 }}
+            >
+              <div className="text-3xl font-bold">
+                <CounterAnimation end={3} duration={1.5} suffix=" Jahre" />
+              </div>
               <div className="text-sm">Gültigkeit</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold">100%</div>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 1.0 }}
+            >
+              <div className="text-3xl font-bold">
+                <CounterAnimation end={100} duration={2} suffix="%" />
+              </div>
               <div className="text-sm">Flexibel</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold">5★</div>
+            </motion.div>
+            <motion.div 
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 1.1 }}
+            >
+              <div className="text-3xl font-bold">
+                <CounterAnimation end={5} duration={1} decimals={1} suffix="★" />
+              </div>
               <div className="text-sm">Bewertung</div>
-            </div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </div>

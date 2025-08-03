@@ -63,18 +63,47 @@ export default function BenefitsSection() {
           {benefits.map((benefit, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="text-center group"
+              initial={{ opacity: 0, y: 40, scale: 0.8 }}
+              animate={isInView ? { 
+                opacity: 1, 
+                y: 0, 
+                scale: 1,
+                transition: {
+                  duration: 0.6,
+                  delay: index * 0.15,
+                  ease: [0.25, 0.1, 0.25, 1]
+                }
+              } : {}}
+              whileHover={{ 
+                y: -15,
+                transition: { 
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20
+                }
+              }}
+              className="text-center group bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all cursor-pointer"
             >
-              <motion.div whileHover={{ scale: 1.1, rotate: 5 }} className="text-6xl mb-4">
+              <motion.div 
+                whileHover={{ 
+                  scale: 1.3, 
+                  rotate: [0, -15, 15, -15, 0],
+                  transition: { duration: 0.5 }
+                }} 
+                className="text-6xl mb-4 inline-block"
+              >
                 {benefit.icon}
               </motion.div>
               <h3 className="text-xl font-avant-garde font-bold mb-2 group-hover:text-flighthour-yellow transition-colors">
                 {benefit.title}
               </h3>
               <p className="text-gray-600">{benefit.description}</p>
+              <motion.div
+                className="h-1 bg-flighthour-yellow rounded-full mt-4 mx-auto"
+                initial={{ width: 0 }}
+                whileHover={{ width: "60%" }}
+                transition={{ duration: 0.3 }}
+              />
             </motion.div>
           ))}
         </div>

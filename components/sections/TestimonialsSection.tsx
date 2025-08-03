@@ -1,12 +1,13 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 export default function TestimonialsSection() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true })
+  const [currentIndex, setCurrentIndex] = useState(0)
 
   const testimonials = [
     {
@@ -35,6 +36,17 @@ export default function TestimonialsSection() {
     },
   ]
 
+  // Auto-rotate testimonials
+  useEffect(() => {
+    if (!isInView) return
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % testimonials.length)
+    }, 5000) // Change every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [isInView, testimonials.length])
+
   return (
     <section id="testimonials" className="py-20" ref={ref}>
       <div className="container-section">
@@ -52,7 +64,8 @@ export default function TestimonialsSection() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        {/* Desktop Grid */}
+        <div className="hidden md:grid md:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
@@ -88,6 +101,65 @@ export default function TestimonialsSection() {
               <p className="text-gray-700 italic">&ldquo;{testimonial.text}&rdquo;</p>
             </motion.div>
           ))}
+        </div>
+
+        {/* Mobile Carousel */}
+        <div className="md:hidden relative h-[400px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, x: 300 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -300 }}
+              transition={{ 
+                type: "spring",
+                stiffness: 100,
+                damping: 20
+              }}
+              className="absolute inset-0 bg-white rounded-2xl shadow-lg p-8"
+            >
+              <div className="flex items-center mb-6">
+                <div className="w-20 h-20 rounded-full bg-gray-200 mr-4 flex items-center justify-center">
+                  <p className="text-xs text-gray-500 text-center">{testimonials[currentIndex].image}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-lg">{testimonials[currentIndex].name}</h4>
+                  <p className="text-sm text-gray-600">{testimonials[currentIndex].age}</p>
+                  <p className="text-sm text-flighthour-yellow">{testimonials[currentIndex].role}</p>
+                </div>
+              </div>
+
+              <div className="flex mb-4">
+                {[...Array(testimonials[currentIndex].rating)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className="w-5 h-5 text-flighthour-yellow"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+
+              <p className="text-gray-700 italic">&ldquo;{testimonials[currentIndex].text}&rdquo;</p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Carousel Indicators */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-2 h-2 rounded-full transition-all ${
+                  index === currentIndex 
+                    ? 'bg-flighthour-yellow w-8' 
+                    : 'bg-gray-300 hover:bg-gray-400'
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

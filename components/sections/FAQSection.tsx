@@ -63,17 +63,31 @@ export default function FAQSection() {
               key={index}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
+              transition={{ 
+                duration: 0.5, 
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 100
+              }}
+              whileHover={{ scale: 1.02 }}
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
-              <button
+              <motion.button
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 transition-colors group"
+                whileTap={{ scale: 0.98 }}
               >
-                <h3 className="font-semibold text-lg pr-4">{faq.question}</h3>
+                <h3 className="font-semibold text-lg pr-4 group-hover:text-flighthour-yellow transition-colors">{faq.question}</h3>
                 <motion.svg
-                  animate={{ rotate: openIndex === index ? 180 : 0 }}
-                  transition={{ duration: 0.3 }}
+                  animate={{ 
+                    rotate: openIndex === index ? 180 : 0,
+                    scale: openIndex === index ? 1.2 : 1
+                  }}
+                  transition={{ 
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 15
+                  }}
                   className="w-5 h-5 text-flighthour-yellow flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
@@ -86,7 +100,7 @@ export default function FAQSection() {
                     d="M19 9l-7 7-7-7"
                   />
                 </motion.svg>
-              </button>
+              </motion.button>
 
               <motion.div
                 initial={false}
@@ -94,10 +108,26 @@ export default function FAQSection() {
                   height: openIndex === index ? 'auto' : 0,
                   opacity: openIndex === index ? 1 : 0,
                 }}
-                transition={{ duration: 0.3 }}
+                transition={{ 
+                  height: {
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 20
+                  },
+                  opacity: {
+                    duration: 0.25
+                  }
+                }}
                 className="overflow-hidden"
               >
-                <p className="px-6 pb-4 text-gray-600">{faq.answer}</p>
+                <motion.p 
+                  className="px-6 pb-4 text-gray-600"
+                  initial={{ y: -20 }}
+                  animate={{ y: openIndex === index ? 0 : -20 }}
+                  transition={{ delay: 0.1 }}
+                >
+                  {faq.answer}
+                </motion.p>
               </motion.div>
             </motion.div>
           ))}

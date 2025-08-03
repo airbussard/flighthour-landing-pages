@@ -77,17 +77,59 @@ export default function PackagesSection() {
           {packages.map((pkg, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className={`relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all ${
+              initial={{ opacity: 0, y: 50, rotateX: -15 }}
+              animate={isInView ? { 
+                opacity: 1, 
+                y: 0, 
+                rotateX: 0,
+                transition: {
+                  duration: 0.8,
+                  delay: index * 0.2,
+                  ease: [0.25, 0.1, 0.25, 1]
+                }
+              } : {}}
+              whileHover={{ 
+                y: -10,
+                scale: 1.02,
+                transition: { 
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20
+                }
+              }}
+              className={`relative bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all group ${
                 pkg.highlighted ? 'ring-4 ring-flighthour-yellow transform scale-105' : ''
               }`}
+              style={{ 
+                transformStyle: 'preserve-3d',
+                perspective: '1000px'
+              }}
             >
               {pkg.highlighted && (
-                <div className="absolute top-0 right-0 bg-flighthour-yellow text-flighthour-black px-4 py-1 rounded-bl-lg font-semibold">
+                <motion.div 
+                  className="absolute top-0 right-0 bg-flighthour-yellow text-flighthour-black px-4 py-1 rounded-bl-lg font-semibold z-10"
+                  initial={{ x: 100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 + index * 0.2, type: "spring" }}
+                >
                   Beliebteste Wahl
-                </div>
+                </motion.div>
+              )}
+              
+              {/* Glow effect for highlighted package */}
+              {pkg.highlighted && (
+                <motion.div 
+                  className="absolute inset-0 bg-flighthour-yellow opacity-10 blur-3xl"
+                  animate={{ 
+                    scale: [1, 1.2, 1],
+                    opacity: [0.1, 0.2, 0.1]
+                  }}
+                  transition={{ 
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
               )}
 
               <div className="p-8 h-full flex flex-col">
