@@ -5,10 +5,11 @@ import { motion } from 'framer-motion'
 
 export default function HeroSection() {
   return (
-    <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
+    <section className="relative h-[400px] md:h-[600px] flex items-center justify-center overflow-hidden">
       {/* YouTube Video Hintergrund */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
-        <div className="absolute inset-0 bg-black/40 z-10" /> {/* Overlay für bessere Lesbarkeit */}
+        <div className="absolute inset-0 bg-black/50 md:bg-black/40 z-10" />{' '}
+        {/* Overlay für bessere Lesbarkeit */}
         <iframe
           className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[max(100%,177.77vh)] h-[max(100%,56.25vw)] min-w-full"
           src="https://www.youtube.com/embed/r1dTSEm4rjo?autoplay=1&mute=1&loop=1&playlist=r1dTSEm4rjo&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
@@ -30,34 +31,34 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-avant-garde font-bold mb-6 text-white drop-shadow-2xl"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-avant-garde font-bold mb-4 md:mb-6 text-white drop-shadow-2xl"
           >
             Das <span className="text-flighthour-yellow drop-shadow-2xl">unvergessliche</span>
-            <br />
-            Geburtstagsgeschenk
+            <br className="hidden sm:block" />
+            <span className="block sm:inline">Geburtstagsgeschenk</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-xl md:text-2xl text-white mb-8 drop-shadow-lg"
+            className="text-base sm:text-lg md:text-xl lg:text-2xl text-white mb-6 md:mb-8 drop-shadow-lg px-4 md:px-0"
           >
             Schenke ein einzigartiges Flugerlebnis im professionellen Flugsimulator.
-            <br />
-            Für Jung und Alt - von 8 bis 88 Jahren!
+            <br className="hidden md:block" />
+            <span className="block md:inline">Für Jung und Alt - von 8 bis 88 Jahren!</span>
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center"
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4 sm:px-0"
           >
-            <Link href="#pakete" className="btn-primary text-lg">
+            <Link href="#pakete" className="btn-primary text-base sm:text-lg py-4 sm:py-3">
               Geschenkpakete entdecken
             </Link>
-            <Link href="#video" className="btn-secondary text-lg">
+            <Link href="#video" className="btn-secondary text-base sm:text-lg py-4 sm:py-3">
               So funktioniert&apos;s
             </Link>
           </motion.div>

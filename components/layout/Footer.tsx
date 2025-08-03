@@ -4,11 +4,11 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-flighthour-black text-white py-12 mt-20">
+    <footer className="bg-flighthour-black text-white py-8 md:py-12 mt-16 md:mt-20">
       <div className="container-section">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-xl font-avant-garde font-bold mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+          <div className="col-span-1 sm:col-span-2 md:col-span-1">
+            <h3 className="text-lg md:text-xl font-avant-garde font-bold mb-3 md:mb-4">
               <span className="text-white">FLIGHT</span>
               <span className="text-flighthour-yellow">HOUR</span>
             </h3>
@@ -18,7 +18,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Geschenkideen</h4>
+            <h4 className="font-semibold mb-3 md:mb-4 text-sm md:text-base">Geschenkideen</h4>
             <ul className="space-y-2 text-sm text-gray-300">
               <li>
                 <Link href="#pakete" className="hover:text-flighthour-yellow transition-colors">
@@ -45,7 +45,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Flighthour</h4>
+            <h4 className="font-semibold mb-3 md:mb-4 text-sm md:text-base">Flighthour</h4>
             <ul className="space-y-2 text-sm text-gray-300">
               <li>
                 <a
@@ -81,7 +81,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-4">Rechtliches</h4>
+            <h4 className="font-semibold mb-3 md:mb-4 text-sm md:text-base">Rechtliches</h4>
             <ul className="space-y-2 text-sm text-gray-300">
               <li>
                 <a

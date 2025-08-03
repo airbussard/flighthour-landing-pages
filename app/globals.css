@@ -28,11 +28,11 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-flighthour-yellow text-flighthour-black font-semibold py-3 px-6 rounded-button transition-all duration-300 hover:bg-opacity-90 hover:shadow-lg active:scale-95;
+    @apply bg-flighthour-yellow text-flighthour-black font-semibold py-3 px-6 rounded-button transition-all duration-300 hover:bg-opacity-90 hover:shadow-lg active:scale-95 min-h-[44px] inline-flex items-center justify-center;
   }
 
   .btn-secondary {
-    @apply bg-flighthour-black text-white font-semibold py-3 px-6 rounded-button transition-all duration-300 hover:bg-gray-800 hover:shadow-lg active:scale-95;
+    @apply bg-flighthour-black text-white font-semibold py-3 px-6 rounded-button transition-all duration-300 hover:bg-gray-800 hover:shadow-lg active:scale-95 min-h-[44px] inline-flex items-center justify-center;
   }
 
   .container-section {

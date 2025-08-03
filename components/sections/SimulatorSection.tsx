@@ -27,16 +27,16 @@ export default function SimulatorSection() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
           >
-            <h3 className="text-2xl font-avant-garde font-bold mb-6 text-flighthour-yellow">
+            <h3 className="text-xl md:text-2xl font-avant-garde font-bold mb-4 md:mb-6 text-flighthour-yellow">
               Perfekte Lage in Oberhausen
             </h3>
-            <ul className="space-y-4 mb-8">
+            <ul className="space-y-3 md:space-y-4 mb-6 md:mb-8">
               <li className="flex items-start">
                 <svg
                   className="w-6 h-6 text-flighthour-yellow mr-3 mt-0.5 flex-shrink-0"
@@ -94,7 +94,7 @@ export default function SimulatorSection() {
                 <span>Restaurants und Cafés in unmittelbarer Nähe</span>
               </li>
             </ul>
-            <p className="text-gray-300">
+            <p className="text-sm md:text-base text-gray-300">
               Mache aus dem Geschenk einen perfekten Tagesausflug - Flugsimulator-Erlebnis
               kombiniert mit Shopping und Dining am Centro!
             </p>
@@ -106,11 +106,11 @@ export default function SimulatorSection() {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-              <h4 className="text-xl font-avant-garde font-bold mb-3 text-flighthour-yellow">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 md:p-6">
+              <h4 className="text-lg md:text-xl font-avant-garde font-bold mb-3 text-flighthour-yellow">
                 Technische Details
               </h4>
-              <ul className="space-y-2 text-gray-300">
+              <ul className="space-y-2 text-sm md:text-base text-gray-300">
                 <li>• Original Airbus A320 Cockpit-Nachbau</li>
                 <li>• Full-Motion System mit 6 Bewegungsachsen</li>
                 <li>• 180° Sichtfeld mit HD-Projektoren</li>
@@ -119,11 +119,11 @@ export default function SimulatorSection() {
               </ul>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
-              <h4 className="text-xl font-avant-garde font-bold mb-3 text-flighthour-yellow">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 md:p-6">
+              <h4 className="text-lg md:text-xl font-avant-garde font-bold mb-3 text-flighthour-yellow">
                 Das Erlebnis
               </h4>
-              <p className="text-gray-300">
+              <p className="text-sm md:text-base text-gray-300">
                 Erlebe hautnah, was Piloten täglich leisten. Von der Vorbereitung über Start und
                 Landung bis zu besonderen Herausforderungen - alles unter Anleitung erfahrener
                 Instruktoren.
