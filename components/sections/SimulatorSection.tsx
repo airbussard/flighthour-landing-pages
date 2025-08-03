@@ -22,8 +22,8 @@ export default function SimulatorSection() {
             Simulator
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Unser professioneller Full-Motion Flugsimulator ist eine originalgetreue Nachbildung des
-            Airbus A320 Cockpits - das meistgeflogene Verkehrsflugzeug Europas.
+            Unser professioneller Flugsimulator ist eine originalgetreue Nachbildung des Airbus A320
+            Cockpits - das meistgeflogene Verkehrsflugzeug Europas.
           </p>
         </motion.div>
 
@@ -112,10 +112,10 @@ export default function SimulatorSection() {
               </h4>
               <ul className="space-y-2 text-sm md:text-base text-gray-300">
                 <li>• Original Airbus A320 Cockpit-Nachbau</li>
-                <li>• Full-Motion System mit 6 Bewegungsachsen</li>
                 <li>• 180° Sichtfeld mit HD-Projektoren</li>
                 <li>• Echte Flugzeug-Instrumente und -Steuerung</li>
                 <li>• Professionelle Flugsimulations-Software</li>
+                <li>• Realistische Geräuschkulisse</li>
               </ul>
             </div>
 

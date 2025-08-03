@@ -46,7 +46,7 @@ export default function HeroSection() {
           >
             Schenke ein einzigartiges Flugerlebnis im professionellen Flugsimulator.
             <br className="hidden md:block" />
-            <span className="block md:inline">Für Jung und Alt - von 8 bis 88 Jahren!</span>
+            <span className="block md:inline">Für Jung und Alt - von 8 bis 90 Jahren!</span>
           </motion.p>
 
           <motion.div
