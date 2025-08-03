@@ -40,7 +40,7 @@ export default function TargetGroupSection() {
             Das perfekte Geschenk für <span className="text-flighthour-yellow">jeden</span>
           </h2>
           <p className="text-xl text-gray-600">
-            Von 8 bis 88 Jahren - Flighthour begeistert alle Altersgruppen
+            Von 8 bis 90 Jahren - Flighthour begeistert alle Altersgruppen
           </p>
         </motion.div>
 
