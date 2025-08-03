@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://geschenke.flighthour.de/sitemap.xml
