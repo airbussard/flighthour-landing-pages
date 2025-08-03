@@ -43,7 +43,7 @@ export default function CTASection() {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <a
-              href="https://flighthour.de/geschenkgutschein"
+              href="https://flighthour.de/products/flugsimulator-geschenkgutscheine"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-flighthour-black text-white font-semibold py-4 px-8 rounded-button text-lg hover:bg-gray-800 transition-all hover:shadow-lg active:scale-95"
@@ -51,7 +51,7 @@ export default function CTASection() {
               Gutschein kaufen
             </a>
             <a
-              href="https://flighthour.de/kontakt"
+              href="https://flighthour.de/pages/kontakt"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-flighthour-black font-semibold py-4 px-8 rounded-button text-lg hover:bg-gray-100 transition-all hover:shadow-lg active:scale-95"
@@ -67,7 +67,7 @@ export default function CTASection() {
             className="mt-12 flex items-center justify-center space-x-8"
           >
             <div className="text-center">
-              <div className="text-3xl font-bold">2 Jahre</div>
+              <div className="text-3xl font-bold">3 Jahre</div>
               <div className="text-sm">Gültigkeit</div>
             </div>
             <div className="text-center">

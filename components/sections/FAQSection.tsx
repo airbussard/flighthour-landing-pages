@@ -111,7 +111,7 @@ export default function FAQSection() {
         >
           <p className="text-gray-600 mb-4">Noch Fragen? Wir helfen gerne weiter!</p>
           <a
-            href="https://flighthour.de/kontakt"
+            href="https://flighthour.de/pages/kontakt"
             target="_blank"
             rel="noopener noreferrer"
             className="btn-primary"

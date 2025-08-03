@@ -22,7 +22,7 @@ export default function PackagesSection() {
         'Erfahrener Instruktor',
       ],
       highlighted: false,
-      ctaLink: 'https://flighthour.de/preise#starter',
+      ctaLink: 'https://flighthour.de/products/flugsimulator-geschenkgutscheine',
     },
     {
       name: 'Premium',
@@ -37,7 +37,7 @@ export default function PackagesSection() {
         'Foto- & Videoaufnahmen',
       ],
       highlighted: true,
-      ctaLink: 'https://flighthour.de/preise#premium',
+      ctaLink: 'https://flighthour.de/products/flugsimulator-geschenkgutscheine',
     },
     {
       name: "Captain's Experience",
@@ -52,7 +52,7 @@ export default function PackagesSection() {
         'Foto- & Videoaufnahmen',
       ],
       highlighted: false,
-      ctaLink: 'https://flighthour.de/preise#captains-experience',
+      ctaLink: 'https://flighthour.de/products/flugsimulator-geschenkgutscheine',
     },
   ]
 
@@ -145,7 +145,9 @@ export default function PackagesSection() {
             Alle Geschenkgutscheine sind 3 Jahre gültig und flexibel einlösbar.
           </p>
           <Link
-            href="https://flighthour.de/kontakt"
+            href="https://flighthour.de/pages/kontakt"
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-flighthour-yellow hover:underline"
           >
             Individuelle Pakete auf Anfrage →
