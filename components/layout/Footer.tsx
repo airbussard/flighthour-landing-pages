@@ -4,7 +4,7 @@ export default function Footer() {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-flighthour-black text-white py-8 md:py-12 mt-16 md:mt-20">
+    <footer className="bg-flighthour-black text-white py-8 md:py-12">
       <div className="container-section">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           <div className="col-span-1 sm:col-span-2 md:col-span-1">
