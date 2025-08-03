@@ -4,6 +4,9 @@ const nextConfig = {
   images: {
     domains: ['flighthour.de'],
   },
+  experimental: {
+    outputFileTracingRoot: undefined,
+  },
 }
 
 export default nextConfig
