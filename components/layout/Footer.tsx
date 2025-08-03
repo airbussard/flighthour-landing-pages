@@ -26,12 +26,18 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="#zielgruppen" className="hover:text-flighthour-yellow transition-colors">
+                <Link
+                  href="#zielgruppen"
+                  className="hover:text-flighthour-yellow transition-colors"
+                >
                   Für Jung und Alt
                 </Link>
               </li>
               <li>
-                <Link href="#testimonials" className="hover:text-flighthour-yellow transition-colors">
+                <Link
+                  href="#testimonials"
+                  className="hover:text-flighthour-yellow transition-colors"
+                >
                   Erfahrungen
                 </Link>
               </li>
@@ -42,9 +48,9 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Flighthour</h4>
             <ul className="space-y-2 text-sm text-gray-300">
               <li>
-                <a 
-                  href="https://flighthour.de" 
-                  target="_blank" 
+                <a
+                  href="https://flighthour.de"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-flighthour-yellow transition-colors"
                 >
@@ -52,9 +58,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://flighthour.de/flugsimulator" 
-                  target="_blank" 
+                <a
+                  href="https://flighthour.de/flugsimulator"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-flighthour-yellow transition-colors"
                 >
@@ -62,9 +68,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://flighthour.de/kontakt" 
-                  target="_blank" 
+                <a
+                  href="https://flighthour.de/kontakt"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-flighthour-yellow transition-colors"
                 >
@@ -78,9 +84,9 @@ export default function Footer() {
             <h4 className="font-semibold mb-4">Rechtliches</h4>
             <ul className="space-y-2 text-sm text-gray-300">
               <li>
-                <a 
-                  href="https://flighthour.de/impressum" 
-                  target="_blank" 
+                <a
+                  href="https://flighthour.de/impressum"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-flighthour-yellow transition-colors"
                 >
@@ -88,9 +94,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://flighthour.de/agb" 
-                  target="_blank" 
+                <a
+                  href="https://flighthour.de/agb"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-flighthour-yellow transition-colors"
                 >
@@ -98,9 +104,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a 
-                  href="https://flighthour.de/datenschutz" 
-                  target="_blank" 
+                <a
+                  href="https://flighthour.de/datenschutz"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-flighthour-yellow transition-colors"
                 >

@@ -17,16 +17,17 @@ export default function CTASection() {
           transition={{ duration: 0.6 }}
           className="text-center max-w-3xl mx-auto"
         >
-          <motion.h2 
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-4xl md:text-5xl font-avant-garde font-bold mb-6"
           >
-            Bereit, jemandem eine <span className="text-white">unvergessliche Freude</span> zu machen?
+            Bereit, jemandem eine <span className="text-white">unvergessliche Freude</span> zu
+            machen?
           </motion.h2>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}

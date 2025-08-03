@@ -33,6 +33,7 @@ npm start
 ## 🎨 Design-System
 
 Das Design basiert auf der Corporate Identity von Flighthour.de:
+
 - **Primärfarbe**: Gelb (#FBB928)
 - **Sekundärfarbe**: Schwarz (#000001)
 - **Schriften**: ITC Avant Garde Gothic & Poppins
@@ -40,9 +41,10 @@ Das Design basiert auf der Corporate Identity von Flighthour.de:
 ## 📱 Landing Pages
 
 ### 1. Geburtstagsgeschenk-Idee
+
 - **URL**: `/` (Homepage)
 - **Zielgruppe**: Menschen, die ein besonderes Geburtstagsgeschenk suchen
-- **Features**: 
+- **Features**:
   - Emotionale Hero-Section
   - Zielgruppen-spezifische Inhalte (Jung & Alt)
   - Paket-Übersicht mit CTAs

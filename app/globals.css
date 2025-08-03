@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --flighthour-yellow: #FBB928;
+    --flighthour-yellow: #fbb928;
     --flighthour-black: #000001;
   }
 
@@ -16,7 +16,12 @@
     @apply font-poppins text-flighthour-black;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-avant-garde;
   }
 }

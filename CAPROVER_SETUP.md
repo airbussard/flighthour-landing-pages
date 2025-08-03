@@ -40,16 +40,20 @@ caprover apps:create flighthour-geschenke
 3. Setze folgende Einstellungen:
 
 ### Port Mapping
+
 - Container HTTP Port: `3000`
 
 ### Environmental Variables
+
 Füge folgende Umgebungsvariablen hinzu:
+
 ```
 NODE_ENV=production
 PORT=3000
 ```
 
 ### Domain konfigurieren
+
 1. Gehe zu **"HTTP Settings"**
 2. Aktiviere **"Enable HTTPS"**
 3. Optional: Füge eine eigene Domain hinzu:
@@ -123,26 +127,31 @@ git push caprover main
 ## 8. Monitoring & Logs
 
 ### App Logs anzeigen
+
 - Web UI: App → **"App Logs"**
 - CLI: `caprover logs -a flighthour-geschenke`
 
 ### Monitoring
+
 - CPU und Memory Usage in der App-Übersicht
 - Setze Alerts für hohe Ressourcennutzung
 
 ## Troubleshooting
 
 ### Build fehlgeschlagen
+
 1. Überprüfe die Build Logs
 2. Stelle sicher, dass `captain-definition` und `Dockerfile` korrekt sind
 3. Überprüfe, ob alle Dependencies in `package.json` definiert sind
 
 ### App startet nicht
+
 1. Überprüfe die App Logs
 2. Stelle sicher, dass Port 3000 korrekt konfiguriert ist
 3. Überprüfe Umgebungsvariablen
 
 ### HTTPS funktioniert nicht
+
 1. Warte 1-2 Minuten nach Aktivierung
 2. Stelle sicher, dass Port 80 und 443 offen sind
 3. Überprüfe DNS-Einstellungen

@@ -12,25 +12,19 @@ export default function TargetGroupSection() {
     {
       title: 'Für junge Abenteurer',
       age: '8-18 Jahre',
-      description: 'Wecke die Begeisterung fürs Fliegen! Ein spannendes Erlebnis, das Technik greifbar macht.',
-      features: [
-        'Altersgerechte Einführung',
-        'Spielerisches Lernen',
-        'Unvergessliche Momente'
-      ],
-      image: '[Bild: Begeisterter Jugendlicher im Cockpit, 800x600]'
+      description:
+        'Wecke die Begeisterung fürs Fliegen! Ein spannendes Erlebnis, das Technik greifbar macht.',
+      features: ['Altersgerechte Einführung', 'Spielerisches Lernen', 'Unvergessliche Momente'],
+      image: '[Bild: Begeisterter Jugendlicher im Cockpit, 800x600]',
     },
     {
       title: 'Für Junggebliebene',
       age: '50+ Jahre',
-      description: 'Erfülle dir einen Lebenstraum! Erlebe die Faszination des Fliegens ohne Risiko.',
-      features: [
-        'Entspanntes Tempo',
-        'Professionelle Betreuung',
-        'Traumerfüllung'
-      ],
-      image: '[Bild: Älterer Herr/Dame mit Freude im Simulator, 800x600]'
-    }
+      description:
+        'Erfülle dir einen Lebenstraum! Erlebe die Faszination des Fliegens ohne Risiko.',
+      features: ['Entspanntes Tempo', 'Professionelle Betreuung', 'Traumerfüllung'],
+      image: '[Bild: Älterer Herr/Dame mit Freude im Simulator, 800x600]',
+    },
   ]
 
   return (
@@ -73,8 +67,16 @@ export default function TargetGroupSection() {
                 <ul className="space-y-2">
                   {group.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center">
-                      <svg className="w-5 h-5 text-flighthour-yellow mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      <svg
+                        className="w-5 h-5 text-flighthour-yellow mr-2"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       <span className="text-gray-700">{feature}</span>
                     </li>

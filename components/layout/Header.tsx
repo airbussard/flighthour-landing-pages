@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 
 export default function Header() {
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
@@ -20,22 +20,22 @@ export default function Header() {
             </span>
             <span className="text-sm text-gray-600">Geschenke</span>
           </Link>
-          
+
           <div className="flex items-center space-x-6">
-            <Link 
-              href="#pakete" 
+            <Link
+              href="#pakete"
               className="text-gray-700 hover:text-flighthour-yellow transition-colors"
             >
               Geschenkpakete
             </Link>
-            <Link 
-              href="#faq" 
+            <Link
+              href="#faq"
               className="text-gray-700 hover:text-flighthour-yellow transition-colors"
             >
               FAQ
             </Link>
-            <Link 
-              href="https://flighthour.de/kontakt" 
+            <Link
+              href="https://flighthour.de/kontakt"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary"

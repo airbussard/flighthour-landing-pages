@@ -3,7 +3,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Flighthour - Das unvergessliche Geburtstagsgeschenk',
-  description: 'Schenke ein einzigartiges Flugerlebnis im professionellen Flugsimulator. Das perfekte Geburtstagsgeschenk für Jung und Alt.',
+  description:
+    'Schenke ein einzigartiges Flugerlebnis im professionellen Flugsimulator. Das perfekte Geburtstagsgeschenk für Jung und Alt.',
   keywords: 'Flugsimulator, Geburtstagsgeschenk, Geschenkidee, Flighthour, Flugerlebnis, Berlin',
   authors: [{ name: 'Flighthour' }],
   openGraph: {
@@ -35,11 +36,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
       <body>{children}</body>

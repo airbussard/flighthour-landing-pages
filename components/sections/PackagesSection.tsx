@@ -18,10 +18,10 @@ export default function PackagesSection() {
         'Einführung ins Cockpit',
         'Start und Landung',
         'Freie Flugzeugwahl',
-        'Erfahrener Instruktor'
+        'Erfahrener Instruktor',
       ],
       highlighted: false,
-      ctaLink: 'https://flighthour.de/preise#starter'
+      ctaLink: 'https://flighthour.de/preise#starter',
     },
     {
       name: 'Premium',
@@ -32,10 +32,10 @@ export default function PackagesSection() {
         'Mehrere Starts & Landungen',
         'Wetterszenarien wählbar',
         'Foto- & Videoaufnahmen',
-        'Getränke inklusive'
+        'Getränke inklusive',
       ],
       highlighted: true,
-      ctaLink: 'https://flighthour.de/preise#premium'
+      ctaLink: 'https://flighthour.de/preise#premium',
     },
     {
       name: 'Deluxe',
@@ -47,11 +47,11 @@ export default function PackagesSection() {
         'Nachtflug möglich',
         'Professionelles Video',
         'Champagner & Snacks',
-        'Erinnerungsurkunde'
+        'Erinnerungsurkunde',
       ],
       highlighted: false,
-      ctaLink: 'https://flighthour.de/preise#deluxe'
-    }
+      ctaLink: 'https://flighthour.de/preise#deluxe',
+    },
   ]
 
   return (
@@ -87,7 +87,7 @@ export default function PackagesSection() {
                   Beliebteste Wahl
                 </div>
               )}
-              
+
               <div className="p-8">
                 <div className="text-center mb-6">
                   <h3 className="text-3xl font-avant-garde font-bold mb-2">{pkg.name}</h3>
@@ -100,8 +100,16 @@ export default function PackagesSection() {
                 <ul className="space-y-3 mb-8">
                   {pkg.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start">
-                      <svg className="w-5 h-5 text-flighthour-yellow mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      <svg
+                        className="w-5 h-5 text-flighthour-yellow mr-2 mt-0.5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       <span className="text-gray-700">{feature}</span>
                     </li>
@@ -134,7 +142,10 @@ export default function PackagesSection() {
           <p className="text-gray-600 mb-4">
             Alle Geschenkgutscheine sind 2 Jahre gültig und flexibel einlösbar.
           </p>
-          <Link href="https://flighthour.de/kontakt" className="text-flighthour-yellow hover:underline">
+          <Link
+            href="https://flighthour.de/kontakt"
+            className="text-flighthour-yellow hover:underline"
+          >
             Individuelle Pakete auf Anfrage →
           </Link>
         </motion.div>

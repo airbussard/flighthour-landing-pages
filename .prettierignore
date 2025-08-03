@@ -1,0 +1,16 @@
+# Dependencies
+node_modules
+.next
+out
+build
+
+# Git
+.git
+
+# Misc
+.DS_Store
+*.log
+
+# Lock files
+package-lock.json
+yarn.lock

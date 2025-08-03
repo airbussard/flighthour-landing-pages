@@ -14,10 +14,10 @@ const config: Config = {
       },
       fontFamily: {
         'avant-garde': ['ITC Avant Garde Gothic', 'sans-serif'],
-        'poppins': ['Poppins', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
       },
       borderRadius: {
-        'button': '10px',
+        button: '10px',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
