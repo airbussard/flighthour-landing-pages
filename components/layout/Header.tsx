@@ -41,6 +41,7 @@ export default function Header() {
               <span className="text-flighthour-black">FLIGHT</span>
               <span className="text-flighthour-yellow">HOUR</span>
             </span>
+            <span className="text-xs md:text-sm text-gray-600">A320 Flugsimulator Oberhausen</span>
           </Link>
 
           {/* Desktop Navigation */}
