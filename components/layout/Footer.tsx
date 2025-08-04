@@ -20,28 +20,30 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold mb-3 md:mb-4 text-sm md:text-base">Geschenkideen</h4>
+            <h4 className="font-semibold mb-3 md:mb-4 text-sm md:text-base">Unsere Angebote</h4>
             <ul className="space-y-2 text-sm text-gray-300">
               <li>
-                <Link href="#pakete" className="hover:text-flighthour-yellow transition-colors">
-                  Geschenkpakete
+                <Link href="/" className="hover:text-flighthour-yellow transition-colors">
+                  Geburtstagsgeschenke
                 </Link>
               </li>
               <li>
                 <Link
-                  href="#zielgruppen"
+                  href="/firmenevents"
                   className="hover:text-flighthour-yellow transition-colors"
                 >
-                  Für Jung und Alt
+                  Firmenevents
                 </Link>
               </li>
               <li>
-                <Link
-                  href="#testimonials"
+                <a
+                  href="https://flighthour.de/collections/flugsimulator-termin-buchen"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="hover:text-flighthour-yellow transition-colors"
                 >
-                  Erfahrungen
-                </Link>
+                  Termine buchen
+                </a>
               </li>
             </ul>
           </div>
