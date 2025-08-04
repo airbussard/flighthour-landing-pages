@@ -119,7 +119,7 @@ export default function PackagesSection() {
               {/* Glow effect for highlighted package */}
               {pkg.highlighted && (
                 <motion.div 
-                  className="absolute inset-0 bg-flighthour-yellow opacity-10 blur-3xl"
+                  className="absolute inset-0 bg-flighthour-yellow opacity-10 blur-3xl pointer-events-none"
                   animate={{ 
                     scale: [1, 1.2, 1],
                     opacity: [0.1, 0.2, 0.1]
@@ -164,7 +164,7 @@ export default function PackagesSection() {
                   href={pkg.ctaLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`block text-center py-3 px-6 rounded-button font-semibold transition-all ${
+                  className={`block text-center py-3 px-6 rounded-button font-semibold transition-all relative z-10 ${
                     pkg.highlighted
                       ? 'bg-flighthour-yellow text-flighthour-black hover:bg-opacity-90'
                       : 'bg-flighthour-black text-white hover:bg-gray-800'
