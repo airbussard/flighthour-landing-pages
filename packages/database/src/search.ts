@@ -112,7 +112,6 @@ export class SearchService {
             select: {
               id: true,
               companyName: true,
-              logo: true,
             },
           },
           images: {
@@ -220,7 +219,7 @@ export class SearchService {
         partner: {
           select: {
             id: true,
-            businessName: true,
+            companyName: true,
             logo: true,
           },
         },
@@ -361,7 +360,7 @@ export class SearchService {
         partner: {
           select: {
             id: true,
-            businessName: true,
+            companyName: true,
             logo: true,
           },
         },
