@@ -1,8 +1,26 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient as SupabaseClientType } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Lazy initialization to handle build-time when env vars might not be available
+let supabaseClient: SupabaseClientType | null = null
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export function getSupabaseClient(): SupabaseClientType | null {
+  // During build time, return null
+  if (typeof window === 'undefined' && !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+    return null
+  }
 
-export type SupabaseClient = typeof supabase
+  // Initialize client if not already done and env vars are available
+  if (!supabaseClient && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    supabaseClient = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+  }
+
+  return supabaseClient
+}
+
+// Export for backward compatibility, but might be null during build
+export const supabase = getSupabaseClient()
+
+export type SupabaseClient = SupabaseClientType

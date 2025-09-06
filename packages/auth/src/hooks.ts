@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from './supabase'
+import { getSupabaseClient } from './supabase'
 import { AuthService, AuthUser } from './auth-service'
 import { Session } from '@supabase/supabase-js'
 
@@ -11,6 +11,14 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const supabase = getSupabaseClient()
+    
+    // If supabase is not available (during build), just set loading to false
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)

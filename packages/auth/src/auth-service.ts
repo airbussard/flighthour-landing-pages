@@ -1,4 +1,4 @@
-import { supabase } from './supabase'
+import { getSupabaseClient } from './supabase'
 import { prisma } from '@eventhour/database'
 import type { User, UserRole } from '@eventhour/database'
 
@@ -11,6 +11,9 @@ export interface AuthUser {
 
 export class AuthService {
   static async signUp(email: string, password: string, name?: string) {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Authentication service not available')
+    
     try {
       // Create Supabase auth user
       const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -50,6 +53,9 @@ export class AuthService {
   }
 
   static async signIn(email: string, password: string) {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Authentication service not available')
+    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -82,11 +88,17 @@ export class AuthService {
   }
 
   static async signOut() {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Authentication service not available')
+    
     const { error } = await supabase.auth.signOut()
     if (error) throw error
   }
 
   static async getCurrentUser(): Promise<AuthUser | null> {
+    const supabase = getSupabaseClient()
+    if (!supabase) return null
+    
     try {
       const { data: { user } } = await supabase.auth.getUser()
       
@@ -111,6 +123,9 @@ export class AuthService {
   }
 
   static async updatePassword(newPassword: string) {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Authentication service not available')
+    
     const { error } = await supabase.auth.updateUser({
       password: newPassword,
     })
@@ -118,6 +133,9 @@ export class AuthService {
   }
 
   static async resetPassword(email: string) {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Authentication service not available')
+    
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
     })
@@ -125,6 +143,9 @@ export class AuthService {
   }
 
   static async verifyOtp(email: string, token: string) {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Authentication service not available')
+    
     const { data, error } = await supabase.auth.verifyOtp({
       email,
       token,
