@@ -111,7 +111,7 @@ export class SearchService {
           partner: {
             select: {
               id: true,
-              businessName: true,
+              companyName: true,
               logo: true,
             },
           },
