@@ -1,2 +1,4 @@
 export { prisma, default } from './client'
 export * from '@prisma/client'
+export { SearchService } from './search'
+export type { SearchParams, SearchResult } from './search'

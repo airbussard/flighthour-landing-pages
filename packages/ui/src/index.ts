@@ -28,5 +28,11 @@ export type { HeaderProps } from './components/Header'
 
 export { Footer } from './components/Footer'
 
+// Search Components
+export * from './components/search'
+
+// Hooks
+export * from './hooks'
+
 // Utils
 export { cn } from './utils/cn'
