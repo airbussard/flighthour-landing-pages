@@ -20,5 +20,13 @@ export type { ContainerProps, SectionProps, GridProps } from './components/Conta
 export { AnimatedSection, AnimatedList, CounterAnimation } from './components/AnimatedSection'
 export type { AnimatedSectionProps, AnimatedListProps, CounterAnimationProps } from './components/AnimatedSection'
 
+export { Logo, LogoIcon } from './components/Logo'
+export type { LogoProps } from './components/Logo'
+
+export { Header } from './components/Header'
+export type { HeaderProps } from './components/Header'
+
+export { Footer } from './components/Footer'
+
 // Utils
 export { cn } from './utils/cn'

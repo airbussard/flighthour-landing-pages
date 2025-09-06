@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { RootLayout } from '@/components/layout/RootLayout'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://eventhour.de'),
   title: 'Eventhour - Unvergessliche Erlebnisse schenken',
   description: 'Entdecke einzigartige Erlebnisse und Geschenkideen bei Eventhour. Von Abenteuer bis Wellness - finde das perfekte Geschenk für jeden Anlass.',
   keywords: 'Erlebnisgeschenke, Gutscheine, Geschenkideen, Abenteuer, Wellness, Events',
@@ -40,7 +42,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
+export default function Layout({
   children,
 }: {
   children: React.ReactNode
@@ -54,7 +56,9 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
       </head>
       <body className="font-poppins antialiased">
-        {children}
+        <RootLayout>
+          {children}
+        </RootLayout>
       </body>
     </html>
   )
