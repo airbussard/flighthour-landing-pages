@@ -16,9 +16,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ suggestions })
   } catch (error) {
     console.error('Suggestions error:', error)
-    return NextResponse.json(
-      { error: 'Failed to get suggestions' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to get suggestions' }, { status: 500 })
   }
 }

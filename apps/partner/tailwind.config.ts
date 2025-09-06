@@ -15,7 +15,7 @@ const config: Config = {
       },
       fontFamily: {
         'avant-garde': ['ITC Avant Garde Gothic', 'sans-serif'],
-        'poppins': ['Poppins', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.6s ease-out',

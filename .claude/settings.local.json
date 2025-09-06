@@ -1,8 +1,6 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(npx create-turbo:*)"
-    ],
+    "allow": ["Bash(npx create-turbo:*)"],
     "deny": [],
     "ask": []
   }

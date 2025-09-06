@@ -4,7 +4,7 @@ import { SearchService } from '@eventhour/database'
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    
+
     const params = {
       query: searchParams.get('q') || undefined,
       categories: searchParams.getAll('category'),
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       location: searchParams.get('location') || undefined,
       radius: searchParams.get('radius') ? Number(searchParams.get('radius')) : undefined,
       partnerId: searchParams.get('partnerId') || undefined,
-      sortBy: searchParams.get('sortBy') as any || 'relevance',
+      sortBy: (searchParams.get('sortBy') as any) || 'relevance',
       page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
       limit: searchParams.get('limit') ? Number(searchParams.get('limit')) : 20,
     }
@@ -25,9 +25,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(results)
   } catch (error) {
     console.error('Search error:', error)
-    return NextResponse.json(
-      { error: 'Search failed' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Search failed' }, { status: 500 })
   }
 }

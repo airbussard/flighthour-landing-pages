@@ -3,7 +3,8 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Eventhour - Unvergessliche Erlebnisse schenken',
-  description: 'Entdecke einzigartige Erlebnisse und Geschenkideen bei Eventhour. Von Abenteuer bis Wellness - finde das perfekte Geschenk für jeden Anlass.',
+  description:
+    'Entdecke einzigartige Erlebnisse und Geschenkideen bei Eventhour. Von Abenteuer bis Wellness - finde das perfekte Geschenk für jeden Anlass.',
   keywords: 'Erlebnisgeschenke, Gutscheine, Geschenkideen, Abenteuer, Wellness, Events',
   openGraph: {
     title: 'Eventhour - Unvergessliche Erlebnisse schenken',
@@ -40,11 +41,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
       <head>
@@ -53,9 +50,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
       </head>
-      <body className="font-poppins antialiased">
-        {children}
-      </body>
+      <body className="font-poppins antialiased">{children}</body>
     </html>
   )
 }

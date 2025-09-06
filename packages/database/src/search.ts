@@ -116,7 +116,7 @@ export class SearchService {
           },
           images: {
             take: 1,
-            orderBy: { order: 'asc' },
+            orderBy: { sortOrder: 'asc' },
           },
         },
       }),
@@ -225,7 +225,7 @@ export class SearchService {
         },
         images: {
           take: 1,
-          orderBy: { order: 'asc' },
+          orderBy: { sortOrder: 'asc' },
         },
       },
     })
@@ -321,7 +321,7 @@ export class SearchService {
       include: {
         partner: true,
         images: {
-          orderBy: { order: 'asc' },
+          orderBy: { sortOrder: 'asc' },
         },
       },
     })
@@ -366,7 +366,7 @@ export class SearchService {
         },
         images: {
           take: 1,
-          orderBy: { order: 'asc' },
+          orderBy: { sortOrder: 'asc' },
         },
       },
     })

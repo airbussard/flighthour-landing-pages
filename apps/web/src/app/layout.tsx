@@ -5,7 +5,8 @@ import { RootLayout } from '@/components/layout/RootLayout'
 export const metadata: Metadata = {
   metadataBase: new URL('https://eventhour.de'),
   title: 'Eventhour - Unvergessliche Erlebnisse schenken',
-  description: 'Entdecke einzigartige Erlebnisse und Geschenkideen bei Eventhour. Von Abenteuer bis Wellness - finde das perfekte Geschenk für jeden Anlass.',
+  description:
+    'Entdecke einzigartige Erlebnisse und Geschenkideen bei Eventhour. Von Abenteuer bis Wellness - finde das perfekte Geschenk für jeden Anlass.',
   keywords: 'Erlebnisgeschenke, Gutscheine, Geschenkideen, Abenteuer, Wellness, Events',
   openGraph: {
     title: 'Eventhour - Unvergessliche Erlebnisse schenken',
@@ -42,11 +43,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function Layout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="de">
       <head>
@@ -56,9 +53,7 @@ export default function Layout({
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
       </head>
       <body className="font-poppins antialiased">
-        <RootLayout>
-          {children}
-        </RootLayout>
+        <RootLayout>{children}</RootLayout>
       </body>
     </html>
   )
