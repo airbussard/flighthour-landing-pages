@@ -1,6 +1,5 @@
 import { getSupabaseClient } from './supabase'
-import { prisma } from '@eventhour/database'
-import type { User, UserRole } from '@eventhour/database'
+import { prisma, type UserRole } from '@eventhour/database'
 
 export interface AuthUser {
   id: string

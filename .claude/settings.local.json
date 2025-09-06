@@ -5,7 +5,8 @@
       "WebSearch",
       "Bash(npm install:*)",
       "Bash(git restore:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npm run db:generate:*)"
     ],
     "deny": [],
     "ask": []

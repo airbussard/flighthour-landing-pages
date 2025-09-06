@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Container, Section, Input, Button, Logo } from '@eventhour/ui'
 import { useAuth } from '@eventhour/auth'
-import { Building2, Mail, Lock } from 'lucide-react'
+import { Building2 } from 'lucide-react'
 
 export default function PartnerLoginPage() {
   const router = useRouter()
@@ -24,18 +24,13 @@ export default function PartnerLoginPage() {
     setError('')
 
     try {
-      const { user, error } = await signIn(formData.email, formData.password)
+      const result = await signIn(formData.email, formData.password)
       
-      if (error) {
-        setError('E-Mail oder Passwort falsch')
-        return
-      }
-
       // Check if user is a partner
       const response = await fetch('/api/partner/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user?.id }),
+        body: JSON.stringify({ userId: result.user.id }),
       })
 
       const data = await response.json()
@@ -47,7 +42,7 @@ export default function PartnerLoginPage() {
 
       router.push('/partnerportal')
     } catch (err) {
-      setError('Ein Fehler ist aufgetreten')
+      setError('E-Mail oder Passwort falsch')
     } finally {
       setLoading(false)
     }
@@ -72,7 +67,6 @@ export default function PartnerLoginPage() {
               <Input
                 label="E-Mail"
                 type="email"
-                icon={<Mail className="h-5 w-5 text-gray-400" />}
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
@@ -82,7 +76,6 @@ export default function PartnerLoginPage() {
               <Input
                 label="Passwort"
                 type="password"
-                icon={<Lock className="h-5 w-5 text-gray-400" />}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
@@ -97,7 +90,7 @@ export default function PartnerLoginPage() {
 
               <Button
                 type="submit"
-                loading={loading}
+                isLoading={loading}
                 className="w-full"
               >
                 Anmelden

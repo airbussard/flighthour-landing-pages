@@ -392,7 +392,7 @@ export default function PartnerRegistrationPage() {
         </Button>
         <Button 
           onClick={handleSubmit} 
-          loading={loading}
+          isLoading={loading}
           disabled={!formData.agreeToTerms}
           className="flex-1"
         >

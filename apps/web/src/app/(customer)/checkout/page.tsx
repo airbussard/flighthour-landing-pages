@@ -301,7 +301,7 @@ export default function CheckoutPage() {
         <Button variant="secondary" onClick={handlePreviousStep} className="flex-1">
           Zurück
         </Button>
-        <Button onClick={handleSubmit} loading={loading} className="flex-1">
+        <Button onClick={handleSubmit} isLoading={loading} className="flex-1">
           Jetzt kostenpflichtig bestellen
         </Button>
       </div>

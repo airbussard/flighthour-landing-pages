@@ -273,7 +273,7 @@ export class PartnerService {
       totalRedemptions,
       activeExperiences,
       thisMonthRevenue: monthlyPayouts._sum.amount || 0,
-      thisMonthRedemptions,
+      thisMonthRedemptions: monthlyRedemptions,
     }
   }
 }

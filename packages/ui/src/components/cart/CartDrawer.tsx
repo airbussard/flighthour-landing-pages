@@ -1,18 +1,25 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { X, ShoppingBag, Plus, Minus, Trash2 } from 'lucide-react'
 import { useCart } from '../../hooks/useCart'
 import { Button } from '../Button'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export const CartDrawer: React.FC = () => {
+  const router = useRouter()
   const { items, isOpen, closeCart, removeItem, updateQuantity, getTotal, getItemCount } = useCart()
 
   // Hydrate on mount
   useEffect(() => {
     useCart.persist.rehydrate()
   }, [])
+  
+  const handleCheckout = () => {
+    closeCart()
+    router.push('/checkout')
+  }
 
   if (!isOpen) return null
 
@@ -142,8 +149,7 @@ export const CartDrawer: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <Button
-                      href="/checkout"
-                      onClick={closeCart}
+                      onClick={handleCheckout}
                       className="w-full"
                     >
                       Zur Kasse
