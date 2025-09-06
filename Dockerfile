@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:18-alpine3.17 AS builder
 RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
@@ -36,7 +36,7 @@ ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder
 RUN npm run build
 
 # Runner stage for web app
-FROM node:18-alpine AS runner
+FROM node:18-alpine3.17 AS runner
 RUN apk add --no-cache openssl1.1-compat
 WORKDIR /app
 
