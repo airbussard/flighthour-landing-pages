@@ -1,0 +1,62 @@
+# Build stage
+FROM node:18-alpine AS builder
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Install turbo globally
+RUN npm install -g turbo
+
+# Copy package files
+COPY package*.json ./
+COPY turbo.json ./
+COPY apps/web/package*.json ./apps/web/
+COPY apps/admin/package*.json ./apps/admin/
+COPY apps/partner/package*.json ./apps/partner/
+COPY packages/ui/package*.json ./packages/ui/
+COPY packages/database/package*.json ./packages/database/
+COPY packages/auth/package*.json ./packages/auth/
+COPY packages/payments/package*.json ./packages/payments/
+COPY packages/consent/package*.json ./packages/consent/
+
+# Install dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Generate Prisma Client
+RUN npm run db:generate --workspace=@eventhour/database || true
+
+# Build all apps
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
+RUN npm run build
+
+# Runner stage for web app
+FROM node:18-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy built application
+COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
+
+# Create uploads directory
+RUN mkdir -p /app/public/uploads && chown -R nextjs:nodejs /app/public
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+# Start the web app by default
+CMD ["node", "apps/web/server.js"]
