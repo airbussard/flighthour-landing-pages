@@ -3,17 +3,17 @@
 import React from 'react'
 import Link from 'next/link'
 import { Logo } from './Logo'
-import { 
-  Facebook, 
-  Instagram, 
-  Twitter, 
+import {
+  Facebook,
+  Instagram,
+  Twitter,
   Youtube,
   Mail,
   Phone,
   MapPin,
   CreditCard,
   Shield,
-  Truck
+  Truck,
 } from 'lucide-react'
 
 export const Footer: React.FC = () => {
@@ -55,8 +55,8 @@ export const Footer: React.FC = () => {
           <div className="lg:col-span-2">
             <Logo size="lg" showText={false} />
             <p className="mt-4 text-gray-400">
-              Eventhour ist dein Partner für unvergessliche Erlebnisse. 
-              Von Abenteuer bis Wellness - wir haben für jeden das passende Geschenk.
+              Eventhour ist dein Partner für unvergessliche Erlebnisse. Von Abenteuer bis Wellness -
+              wir haben für jeden das passende Geschenk.
             </p>
             <div className="mt-6 flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
@@ -79,27 +79,42 @@ export const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">Erlebnisse</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/kategorien/abenteuer-action" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/kategorien/abenteuer-action"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Abenteuer & Action
                 </Link>
               </li>
               <li>
-                <Link href="/kategorien/wellness-entspannung" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/kategorien/wellness-entspannung"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Wellness & Entspannung
                 </Link>
               </li>
               <li>
-                <Link href="/kategorien/kulinarik-genuss" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/kategorien/kulinarik-genuss"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Kulinarik & Genuss
                 </Link>
               </li>
               <li>
-                <Link href="/kategorien/sport-fitness" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/kategorien/sport-fitness"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Sport & Fitness
                 </Link>
               </li>
               <li>
-                <Link href="/wertgutschein" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/wertgutschein"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Wertgutschein
                 </Link>
               </li>
@@ -111,27 +126,42 @@ export const Footer: React.FC = () => {
             <h3 className="text-lg font-semibold mb-4">Service</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/hilfe" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/hilfe"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Hilfe & FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/kontakt" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/kontakt"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Kontakt
                 </Link>
               </li>
               <li>
-                <Link href="/gutschein-einloesen" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/gutschein-einloesen"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Gutschein einlösen
                 </Link>
               </li>
               <li>
-                <Link href="/partner-werden" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/partner-werden"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Partner werden
                 </Link>
               </li>
               <li>
-                <Link href="/corporate" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <Link
+                  href="/corporate"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   Firmenkunden
                 </Link>
               </li>
@@ -151,7 +181,10 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-start space-x-3">
                 <Mail className="h-5 w-5 text-eventhour-yellow mt-0.5" />
-                <a href="mailto:info@eventhour.de" className="text-gray-400 hover:text-eventhour-yellow transition-colors">
+                <a
+                  href="mailto:info@eventhour.de"
+                  className="text-gray-400 hover:text-eventhour-yellow transition-colors"
+                >
                   info@eventhour.de
                 </a>
               </li>
@@ -193,11 +226,31 @@ export const Footer: React.FC = () => {
         {/* Payment Methods */}
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="flex flex-wrap items-center justify-center gap-6">
-            <img src="/payment/visa.svg" alt="Visa" className="h-8 opacity-60 hover:opacity-100 transition-opacity" />
-            <img src="/payment/mastercard.svg" alt="Mastercard" className="h-8 opacity-60 hover:opacity-100 transition-opacity" />
-            <img src="/payment/paypal.svg" alt="PayPal" className="h-8 opacity-60 hover:opacity-100 transition-opacity" />
-            <img src="/payment/klarna.svg" alt="Klarna" className="h-8 opacity-60 hover:opacity-100 transition-opacity" />
-            <img src="/payment/sepa.svg" alt="SEPA" className="h-8 opacity-60 hover:opacity-100 transition-opacity" />
+            <img
+              src="/payment/visa.svg"
+              alt="Visa"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+            <img
+              src="/payment/mastercard.svg"
+              alt="Mastercard"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+            <img
+              src="/payment/paypal.svg"
+              alt="PayPal"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+            <img
+              src="/payment/klarna.svg"
+              alt="Klarna"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
+            <img
+              src="/payment/sepa.svg"
+              alt="SEPA"
+              className="h-8 opacity-60 hover:opacity-100 transition-opacity"
+            />
           </div>
         </div>
 
@@ -208,16 +261,28 @@ export const Footer: React.FC = () => {
               © 2024 Eventhour GmbH. Alle Rechte vorbehalten.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <Link href="/impressum" className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm">
+              <Link
+                href="/impressum"
+                className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm"
+              >
                 Impressum
               </Link>
-              <Link href="/datenschutz" className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm">
+              <Link
+                href="/datenschutz"
+                className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm"
+              >
                 Datenschutz
               </Link>
-              <Link href="/agb" className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm">
+              <Link
+                href="/agb"
+                className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm"
+              >
                 AGB
               </Link>
-              <Link href="/widerrufsrecht" className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm">
+              <Link
+                href="/widerrufsrecht"
+                className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm"
+              >
                 Widerrufsrecht
               </Link>
             </div>

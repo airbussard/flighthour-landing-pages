@@ -60,15 +60,13 @@ export class SearchService {
             }
           : {},
         // Category filter
-        categories && categories.length > 0
-          ? { category: { name: { in: categories } } }
-          : {},
+        categories && categories.length > 0 ? { category: { name: { in: categories } } } : {},
         // Price range
         minPrice !== undefined ? { retailPrice: { gte: minPrice * 100 } } : {},
         maxPrice !== undefined ? { retailPrice: { lte: maxPrice * 100 } } : {},
         // Duration filter
         duration && duration.length > 0
-          ? { duration: { in: duration.map(d => parseInt(d)) } }
+          ? { duration: { in: duration.map((d) => parseInt(d)) } }
           : {},
         // Popularity filter (using popularityScore instead of rating)
         rating !== undefined ? { popularityScore: { gte: rating * 20 } } : {},
@@ -232,9 +230,7 @@ export class SearchService {
     return experiences
   }
 
-  private static async calculateFacets(
-    baseWhere: Prisma.ExperienceWhereInput
-  ) {
+  private static async calculateFacets(baseWhere: Prisma.ExperienceWhereInput) {
     const [categories, priceData, durations] = await Promise.all([
       // Category facets
       prisma.category.findMany({
@@ -326,10 +322,7 @@ export class SearchService {
     })
   }
 
-  static async getRelatedExperiences(
-    experienceId: string,
-    limit = 4
-  ): Promise<Experience[]> {
+  static async getRelatedExperiences(experienceId: string, limit = 4): Promise<Experience[]> {
     const experience = await prisma.experience.findUnique({
       where: { id: experienceId },
       select: { categoryId: true, retailPrice: true },

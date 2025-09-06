@@ -3,16 +3,16 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Search, 
-  ShoppingCart, 
-  User, 
-  Menu, 
-  X, 
+import {
+  Search,
+  ShoppingCart,
+  User,
+  Menu,
+  X,
   ChevronDown,
   Heart,
   LogOut,
-  Settings
+  Settings,
 } from 'lucide-react'
 import { Logo } from './Logo'
 import { Button } from './Button'
@@ -65,13 +65,13 @@ export const Header: React.FC<HeaderProps> = ({ user, cartCount = 0 }) => {
             >
               Alle Erlebnisse
             </Link>
-            
+
             <div className="relative group">
               <button className="flex items-center text-gray-700 hover:text-eventhour-yellow transition-colors font-medium">
                 Kategorien
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
-              
+
               <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                 {categories.map((category) => (
                   <Link
@@ -91,7 +91,7 @@ export const Header: React.FC<HeaderProps> = ({ user, cartCount = 0 }) => {
             >
               Wertgutschein
             </Link>
-            
+
             <Link
               href="/ueber-uns"
               className="text-gray-700 hover:text-eventhour-yellow transition-colors font-medium"
@@ -141,7 +141,7 @@ export const Header: React.FC<HeaderProps> = ({ user, cartCount = 0 }) => {
                   >
                     <User className="h-5 w-5" />
                   </button>
-                  
+
                   <AnimatePresence>
                     {isUserMenuOpen && (
                       <motion.div
@@ -246,7 +246,7 @@ export const Header: React.FC<HeaderProps> = ({ user, cartCount = 0 }) => {
               >
                 <X className="h-6 w-6" />
               </button>
-              
+
               <div className="mt-8 space-y-4">
                 <Link
                   href="/erlebnisse"
@@ -254,7 +254,7 @@ export const Header: React.FC<HeaderProps> = ({ user, cartCount = 0 }) => {
                 >
                   Alle Erlebnisse
                 </Link>
-                
+
                 <div>
                   <p className="py-2 text-lg font-medium text-gray-700">Kategorien</p>
                   <div className="ml-4 space-y-2">
@@ -269,14 +269,14 @@ export const Header: React.FC<HeaderProps> = ({ user, cartCount = 0 }) => {
                     ))}
                   </div>
                 </div>
-                
+
                 <Link
                   href="/wertgutschein"
                   className="block py-2 text-lg font-medium text-gray-700 hover:text-eventhour-yellow"
                 >
                   Wertgutschein
                 </Link>
-                
+
                 <Link
                   href="/ueber-uns"
                   className="block py-2 text-lg font-medium text-gray-700 hover:text-eventhour-yellow"

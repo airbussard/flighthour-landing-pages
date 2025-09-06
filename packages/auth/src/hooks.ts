@@ -12,7 +12,7 @@ export function useAuth() {
 
   useEffect(() => {
     const supabase = getSupabaseClient()
-    
+
     // If supabase is not available (during build), just set loading to false
     if (!supabase) {
       setLoading(false)
@@ -29,18 +29,18 @@ export function useAuth() {
     })
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session)
-        if (session) {
-          const user = await AuthService.getCurrentUser()
-          setUser(user)
-        } else {
-          setUser(null)
-        }
-        setLoading(false)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setSession(session)
+      if (session) {
+        const user = await AuthService.getCurrentUser()
+        setUser(user)
+      } else {
+        setUser(null)
       }
-    )
+      setLoading(false)
+    })
 
     return () => subscription.unsubscribe()
   }, [])
@@ -57,7 +57,7 @@ export function useAuth() {
 
 export function useRequireAuth(redirectTo = '/auth/signin') {
   const { user, loading } = useAuth()
-  
+
   useEffect(() => {
     if (!loading && !user && typeof window !== 'undefined') {
       window.location.href = redirectTo
@@ -69,7 +69,7 @@ export function useRequireAuth(redirectTo = '/auth/signin') {
 
 export function useRequireRole(allowedRoles: string[], redirectTo = '/') {
   const { user, loading } = useAuth()
-  
+
   useEffect(() => {
     if (!loading && user && !allowedRoles.includes(user.role) && typeof window !== 'undefined') {
       window.location.href = redirectTo

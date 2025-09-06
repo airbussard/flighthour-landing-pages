@@ -39,16 +39,12 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   className,
   mobile = false,
 }) => {
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(
-    filters.map((f) => f.id)
-  )
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(filters.map((f) => f.id))
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   const toggleGroup = (groupId: string) => {
     setExpandedGroups((prev) =>
-      prev.includes(groupId)
-        ? prev.filter((id) => id !== groupId)
-        : [...prev, groupId]
+      prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]
     )
   }
 
@@ -57,8 +53,9 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
   }
 
   const hasActiveFilters = Object.keys(selectedFilters).some(
-    (key) => selectedFilters[key] && 
-    (Array.isArray(selectedFilters[key]) ? selectedFilters[key].length > 0 : true)
+    (key) =>
+      selectedFilters[key] &&
+      (Array.isArray(selectedFilters[key]) ? selectedFilters[key].length > 0 : true)
   )
 
   const renderFilterGroup = (group: FilterGroup) => {
@@ -108,13 +105,9 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                           }}
                           className="w-4 h-4 text-eventhour-yellow focus:ring-eventhour-yellow border-gray-300 rounded"
                         />
-                        <span className="flex-1 text-sm text-gray-700">
-                          {option.label}
-                        </span>
+                        <span className="flex-1 text-sm text-gray-700">{option.label}</span>
                         {option.count !== undefined && (
-                          <span className="text-xs text-gray-500">
-                            ({option.count})
-                          </span>
+                          <span className="text-xs text-gray-500">({option.count})</span>
                         )}
                       </label>
                     ))}
@@ -135,13 +128,9 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                           onChange={() => handleFilterChange(group.id, option.value)}
                           className="w-4 h-4 text-eventhour-yellow focus:ring-eventhour-yellow border-gray-300"
                         />
-                        <span className="flex-1 text-sm text-gray-700">
-                          {option.label}
-                        </span>
+                        <span className="flex-1 text-sm text-gray-700">{option.label}</span>
                         {option.count !== undefined && (
-                          <span className="text-xs text-gray-500">
-                            ({option.count})
-                          </span>
+                          <span className="text-xs text-gray-500">({option.count})</span>
                         )}
                       </label>
                     ))}
@@ -151,15 +140,11 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                 {group.type === 'range' && (
                   <div className="px-2 py-3">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">
-                        {group.min}€
-                      </span>
+                      <span className="text-sm text-gray-600">{group.min}€</span>
                       <span className="text-sm font-medium text-gray-900">
                         {selectedFilters[group.id] || group.max}€
                       </span>
-                      <span className="text-sm text-gray-600">
-                        {group.max}€
-                      </span>
+                      <span className="text-sm text-gray-600">{group.max}€</span>
                     </div>
                     <input
                       type="range"
@@ -184,9 +169,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
     <div className="space-y-4">
       {hasActiveFilters && (
         <div className="flex items-center justify-between pb-2 border-b border-gray-200">
-          <span className="text-sm font-medium text-gray-700">
-            Filter aktiv
-          </span>
+          <span className="text-sm font-medium text-gray-700">Filter aktiv</span>
           <button
             onClick={onClear}
             className="text-sm text-eventhour-yellow hover:text-yellow-600 flex items-center gap-1"
@@ -245,11 +228,7 @@ export const SearchFilters: React.FC<SearchFiltersProps> = ({
                   {filterContent}
 
                   <div className="mt-6 flex gap-2">
-                    <Button
-                      onClick={() => setShowMobileFilters(false)}
-                      variant="primary"
-                      fullWidth
-                    >
+                    <Button onClick={() => setShowMobileFilters(false)} variant="primary" fullWidth>
                       Anwenden
                     </Button>
                   </div>

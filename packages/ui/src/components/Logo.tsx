@@ -25,7 +25,13 @@ export const Logo: React.FC<LogoProps> = ({
   }
 
   const logoContent = (
-    <div className={clsx('font-avant-garde font-black uppercase tracking-tight', sizes[size], className)}>
+    <div
+      className={clsx(
+        'font-avant-garde font-black uppercase tracking-tight',
+        sizes[size],
+        className
+      )}
+    >
       <span className="text-eventhour-yellow">EVENT</span>
       <span className="text-gray-800">HOUR</span>
       {showText && (

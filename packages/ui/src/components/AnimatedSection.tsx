@@ -148,11 +148,11 @@ export const CounterAnimation: React.FC<CounterAnimationProps> = ({
     const updateCount = () => {
       const now = Date.now()
       const progress = Math.min((now - startTime) / (duration * 1000), 1)
-      
+
       // Easing function for smooth animation
       const easeOutQuart = 1 - Math.pow(1 - progress, 4)
       const currentCount = Math.floor(from + (to - from) * easeOutQuart)
-      
+
       setCount(currentCount)
 
       if (progress < 1) {

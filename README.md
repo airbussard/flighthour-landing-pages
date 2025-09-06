@@ -7,11 +7,13 @@ Ein modernes Erlebnisportal built mit Next.js 14, Turborepo und Supabase.
 Dies ist ein Turborepo Monorepo mit folgenden Apps und Packages:
 
 ### Apps
+
 - `web` - Hauptportal für Kunden (Port 3000)
 - `admin` - Admin-Dashboard (Port 3001)
 - `partner` - Partner-Portal (Port 3002)
 
 ### Packages
+
 - `@eventhour/ui` - Gemeinsame UI-Komponenten
 - `@eventhour/database` - Prisma Schema und Datenbank-Utils
 - `@eventhour/auth` - Authentifizierungs-Logik
@@ -51,6 +53,7 @@ npm run type-check
 ## 🎨 Design-System
 
 Das Projekt verwendet das Eventhour Design-System:
+
 - **Primärfarbe**: Gelb (#FBB928)
 - **Sekundärfarbe**: Schwarz (#000001)
 - **Schriftarten**: ITC Avant Garde Gothic (Headlines), Poppins (Text)

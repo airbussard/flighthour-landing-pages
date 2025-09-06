@@ -3,11 +3,13 @@
 ## CapRover Deployment
 
 ### Prerequisites
+
 1. CapRover instance running
 2. PostgreSQL database
 3. Supabase project for authentication
 
 ### Environment Variables
+
 Set these in CapRover App Config:
 
 ```bash
@@ -39,6 +41,7 @@ NEXTAUTH_SECRET=generate-a-secure-secret
    - Docker build uses multi-stage build for optimization
 
 3. **Database Setup**
+
    ```bash
    # Run migrations after first deployment
    npm run db:push
@@ -52,6 +55,7 @@ NEXTAUTH_SECRET=generate-a-secure-secret
 ## Local Development
 
 ### Using Docker Compose
+
 ```bash
 # Start services
 docker-compose up -d
@@ -64,6 +68,7 @@ docker-compose down
 ```
 
 ### Direct Development
+
 ```bash
 # Install dependencies
 npm install
@@ -78,11 +83,13 @@ npm run build
 ## Multiple Apps
 
 The monorepo contains 3 apps:
+
 - **web** (Port 3000): Main customer portal
 - **admin** (Port 3001): Admin dashboard
 - **partner** (Port 3002): Partner portal
 
 For deploying multiple apps on CapRover:
+
 1. Create separate CapRover apps for each
 2. Modify Dockerfile CMD for each app:
    - Web: `CMD ["node", "apps/web/server.js"]`
@@ -92,16 +99,19 @@ For deploying multiple apps on CapRover:
 ## Troubleshooting
 
 ### Build Failures
+
 - Check Node.js version (requires 18+)
 - Verify all environment variables are set
 - Check Prisma schema is valid
 
 ### Runtime Errors
+
 - Verify database connection
 - Check Supabase credentials
 - Review application logs in CapRover
 
 ### Performance
+
 - Enable caching in CapRover
 - Use CDN for static assets
 - Configure proper memory limits

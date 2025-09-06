@@ -18,7 +18,11 @@ export { Container, Section, Grid } from './components/Container'
 export type { ContainerProps, SectionProps, GridProps } from './components/Container'
 
 export { AnimatedSection, AnimatedList, CounterAnimation } from './components/AnimatedSection'
-export type { AnimatedSectionProps, AnimatedListProps, CounterAnimationProps } from './components/AnimatedSection'
+export type {
+  AnimatedSectionProps,
+  AnimatedListProps,
+  CounterAnimationProps,
+} from './components/AnimatedSection'
 
 export { Logo, LogoIcon } from './components/Logo'
 export type { LogoProps } from './components/Logo'

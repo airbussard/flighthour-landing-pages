@@ -99,7 +99,8 @@ async function main() {
       {
         title: 'Tandem Fallschirmsprung',
         slug: 'tandem-fallschirmsprung-berlin',
-        description: 'Erlebe den ultimativen Adrenalinkick mit einem Tandemsprung aus 4000 Metern Höhe. Professionelle Instruktoren sorgen für deine Sicherheit.',
+        description:
+          'Erlebe den ultimativen Adrenalinkick mit einem Tandemsprung aus 4000 Metern Höhe. Professionelle Instruktoren sorgen für deine Sicherheit.',
         shortDescription: 'Fallschirmsprung aus 4000m Höhe',
         locationName: 'Skydive Berlin',
         city: 'Berlin',
@@ -113,7 +114,8 @@ async function main() {
       {
         title: 'Wellness-Wochenende Deluxe',
         slug: 'wellness-wochenende-deluxe-brandenburg',
-        description: 'Zwei Übernachtungen im 5-Sterne Spa-Hotel inklusive Vollpension und unbegrenztem Spa-Zugang.',
+        description:
+          'Zwei Übernachtungen im 5-Sterne Spa-Hotel inklusive Vollpension und unbegrenztem Spa-Zugang.',
         shortDescription: 'Luxus-Spa-Wochenende für Zwei',
         locationName: 'Seeschloss Spa',
         city: 'Brandenburg',
@@ -127,7 +129,8 @@ async function main() {
       {
         title: 'Sushi-Kochkurs',
         slug: 'sushi-kochkurs-berlin',
-        description: 'Lerne die Kunst der Sushi-Zubereitung von einem japanischen Meisterkoch. Inkl. aller Zutaten und Verkostung.',
+        description:
+          'Lerne die Kunst der Sushi-Zubereitung von einem japanischen Meisterkoch. Inkl. aller Zutaten und Verkostung.',
         shortDescription: 'Japanischer Sushi-Kurs',
         locationName: 'Kochschule Berlin',
         city: 'Berlin',
@@ -141,7 +144,8 @@ async function main() {
       {
         title: 'Stand-Up Paddling Kurs',
         slug: 'stand-up-paddling-kurs-wannsee',
-        description: 'Einführungskurs ins Stand-Up Paddling am schönen Wannsee. Equipment und Neoprenanzug inklusive.',
+        description:
+          'Einführungskurs ins Stand-Up Paddling am schönen Wannsee. Equipment und Neoprenanzug inklusive.',
         shortDescription: 'SUP-Kurs am Wannsee',
         locationName: 'SUP Station Wannsee',
         city: 'Berlin',

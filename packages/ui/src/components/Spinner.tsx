@@ -10,11 +10,7 @@ export interface SpinnerProps {
   className?: string
 }
 
-export const Spinner: React.FC<SpinnerProps> = ({
-  size = 'md',
-  color = 'primary',
-  className,
-}) => {
+export const Spinner: React.FC<SpinnerProps> = ({ size = 'md', color = 'primary', className }) => {
   const sizes = {
     sm: 'w-4 h-4',
     md: 'w-8 h-8',
@@ -32,11 +28,7 @@ export const Spinner: React.FC<SpinnerProps> = ({
   return (
     <div className={clsx('flex items-center justify-center', className)}>
       <motion.div
-        className={clsx(
-          'rounded-full border-4 border-t-transparent',
-          sizes[size],
-          colors[color]
-        )}
+        className={clsx('rounded-full border-4 border-t-transparent', sizes[size], colors[color])}
         animate={{ rotate: 360 }}
         transition={{
           duration: 1,
@@ -72,9 +64,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
       )}
     >
       <Spinner size="lg" />
-      {text && (
-        <p className="mt-4 text-gray-600 font-medium">{text}</p>
-      )}
+      {text && <p className="mt-4 text-gray-600 font-medium">{text}</p>}
     </motion.div>
   )
 }

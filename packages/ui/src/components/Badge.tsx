@@ -37,10 +37,7 @@ export const Badge: React.FC<BadgeProps> = ({
   }
 
   return (
-    <span
-      className={clsx(baseStyles, variants[variant], sizes[size], className)}
-      {...props}
-    >
+    <span className={clsx(baseStyles, variants[variant], sizes[size], className)} {...props}>
       {LeftIcon && <LeftIcon className="w-4 h-4 mr-1" />}
       {children}
       {RightIcon && <RightIcon className="w-4 h-4 ml-1" />}

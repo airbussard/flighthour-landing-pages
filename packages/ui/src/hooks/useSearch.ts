@@ -72,33 +72,36 @@ export function useRecentSearches(key = 'recentSearches', maxItems = 10) {
     }
   }, [key])
 
-  const addSearch = useCallback((search: string) => {
-    if (!search.trim()) return
+  const addSearch = useCallback(
+    (search: string) => {
+      if (!search.trim()) return
 
-    const updated = [
-      search,
-      ...searches.filter((s) => s !== search),
-    ].slice(0, maxItems)
+      const updated = [search, ...searches.filter((s) => s !== search)].slice(0, maxItems)
 
-    setSearches(updated)
-    
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(key, JSON.stringify(updated))
-    }
-  }, [searches, key, maxItems])
+      setSearches(updated)
 
-  const removeSearch = useCallback((search: string) => {
-    const updated = searches.filter((s) => s !== search)
-    setSearches(updated)
-    
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(key, JSON.stringify(updated))
-    }
-  }, [searches, key])
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(key, JSON.stringify(updated))
+      }
+    },
+    [searches, key, maxItems]
+  )
+
+  const removeSearch = useCallback(
+    (search: string) => {
+      const updated = searches.filter((s) => s !== search)
+      setSearches(updated)
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(key, JSON.stringify(updated))
+      }
+    },
+    [searches, key]
+  )
 
   const clearSearches = useCallback(() => {
     setSearches([])
-    
+
     if (typeof window !== 'undefined') {
       localStorage.removeItem(key)
     }

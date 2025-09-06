@@ -78,12 +78,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     return (
       <div className="text-center py-12">
         <div className="text-gray-400 mb-4">
-          <svg
-            className="w-24 h-24 mx-auto"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+          <svg className="w-24 h-24 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -93,9 +88,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           </svg>
         </div>
         <h3 className="text-xl font-semibold mb-2">Keine Ergebnisse gefunden</h3>
-        <p className="text-gray-600">
-          Versuche es mit anderen Suchbegriffen oder Filtern
-        </p>
+        <p className="text-gray-600">Versuche es mit anderen Suchbegriffen oder Filtern</p>
       </div>
     )
   }
@@ -110,11 +103,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card
-              hoverable
-              className="cursor-pointer"
-              onClick={() => onResultClick?.(result)}
-            >
+            <Card hoverable className="cursor-pointer" onClick={() => onResultClick?.(result)}>
               <div className="flex gap-6">
                 <div className="relative w-48 h-32 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                   {result.image && (
@@ -134,12 +123,8 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <span className="text-xs text-gray-500 uppercase">
-                        {result.category}
-                      </span>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        {result.title}
-                      </h3>
+                      <span className="text-xs text-gray-500 uppercase">{result.category}</span>
+                      <h3 className="text-lg font-semibold text-gray-900">{result.title}</h3>
                     </div>
                     <div className="text-right">
                       <div className="text-2xl font-bold text-eventhour-yellow">
@@ -149,9 +134,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                     </div>
                   </div>
 
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {result.description}
-                  </p>
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{result.description}</p>
 
                   <div className="flex items-center gap-4 text-sm">
                     <div className="flex items-center gap-1">
@@ -178,13 +161,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   }
 
   return (
-    <div
-      className={clsx(
-        'grid gap-6',
-        'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-        className
-      )}
-    >
+    <div className={clsx('grid gap-6', 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3', className)}>
       {results.map((result, index) => (
         <motion.div
           key={result.id}
@@ -200,37 +177,27 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           >
             <div className="relative aspect-[4/3] bg-gray-200">
               {result.image && (
-                <img
-                  src={result.image}
-                  alt={result.title}
-                  className="w-full h-full object-cover"
-                />
+                <img src={result.image} alt={result.title} className="w-full h-full object-cover" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              
+
               {result.isNew && (
                 <div className="absolute top-4 left-4 bg-eventhour-yellow text-eventhour-black text-xs font-bold px-2 py-1 rounded">
                   NEU
                 </div>
               )}
-              
+
               <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-eventhour-black px-3 py-1 rounded-full font-bold">
                 {result.price}€
               </div>
             </div>
 
             <div className="p-6 flex-1 flex flex-col">
-              <span className="text-xs text-gray-500 uppercase mb-1">
-                {result.category}
-              </span>
-              
-              <h3 className="text-lg font-semibold mb-2 line-clamp-2">
-                {result.title}
-              </h3>
-              
-              <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-1">
-                {result.description}
-              </p>
+              <span className="text-xs text-gray-500 uppercase mb-1">{result.category}</span>
+
+              <h3 className="text-lg font-semibold mb-2 line-clamp-2">{result.title}</h3>
+
+              <p className="text-sm text-gray-600 mb-4 line-clamp-2 flex-1">{result.description}</p>
 
               <div className="space-y-2">
                 <div className="flex items-center gap-4 text-sm">
@@ -243,14 +210,12 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                     <span className="text-gray-600">{result.duration}</span>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     <Star className="h-4 w-4 fill-eventhour-yellow text-eventhour-yellow" />
                     <span className="font-medium text-sm">{result.rating}</span>
-                    <span className="text-sm text-gray-500">
-                      ({result.reviewCount})
-                    </span>
+                    <span className="text-sm text-gray-500">({result.reviewCount})</span>
                   </div>
                 </div>
               </div>

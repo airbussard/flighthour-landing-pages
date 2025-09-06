@@ -25,12 +25,7 @@ export const Container: React.FC<ContainerProps> = ({
 
   return (
     <div
-      className={clsx(
-        sizes[size],
-        'mx-auto',
-        padding && 'px-4 sm:px-6 lg:px-8',
-        className
-      )}
+      className={clsx(sizes[size], 'mx-auto', padding && 'px-4 sm:px-6 lg:px-8', className)}
       {...props}
     >
       {children}
@@ -65,10 +60,7 @@ export const Section: React.FC<SectionProps> = ({
   }
 
   return (
-    <section
-      className={clsx(variants[variant], paddings[padding], className)}
-      {...props}
-    >
+    <section className={clsx(variants[variant], paddings[padding], className)} {...props}>
       {children}
     </section>
   )
@@ -104,10 +96,7 @@ export const Grid: React.FC<GridProps> = ({
   }
 
   return (
-    <div
-      className={clsx('grid', columns[cols], gaps[gap], className)}
-      {...props}
-    >
+    <div className={clsx('grid', columns[cols], gaps[gap], className)} {...props}>
       {children}
     </div>
   )

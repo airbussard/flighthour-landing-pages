@@ -66,7 +66,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     const items = [...suggestions, ...recentSearches]
-    
+
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setSelectedIndex((prev) => (prev < items.length - 1 ? prev + 1 : 0))

@@ -5,7 +5,7 @@ import { HTMLMotionProps, motion } from 'framer-motion'
 import { clsx } from 'clsx'
 import { LucideIcon } from 'lucide-react'
 
-export interface ButtonProps extends HTMLMotionProps<"button"> {
+export interface ButtonProps extends HTMLMotionProps<'button'> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
@@ -37,8 +37,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variants = {
       primary:
         'bg-eventhour-yellow text-eventhour-black hover:scale-105 hover:shadow-lg active:scale-100',
-      secondary:
-        'bg-eventhour-black text-white hover:scale-105 hover:shadow-lg active:scale-100',
+      secondary: 'bg-eventhour-black text-white hover:scale-105 hover:shadow-lg active:scale-100',
       outline:
         'border-2 border-eventhour-black text-eventhour-black hover:bg-eventhour-black hover:text-white active:scale-95',
       ghost: 'text-eventhour-black hover:bg-gray-100 active:scale-95',

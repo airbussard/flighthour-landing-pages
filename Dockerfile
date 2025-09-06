@@ -1,6 +1,6 @@
 # Build stage
 FROM node:18-alpine AS builder
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat openssl1.1-compat
 WORKDIR /app
 
 # Install turbo globally
@@ -37,6 +37,7 @@ RUN npm run build
 
 # Runner stage for web app
 FROM node:18-alpine AS runner
+RUN apk add --no-cache openssl1.1-compat
 WORKDIR /app
 
 ENV NODE_ENV production

@@ -13,13 +13,8 @@ export const RootLayout: React.FC<RootLayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header 
-        user={user ? { name: user.name || 'User', email: user.email } : null}
-        cartCount={0}
-      />
-      <main className="flex-1">
-        {children}
-      </main>
+      <Header user={user ? { name: user.name || 'User', email: user.email } : null} cartCount={0} />
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
   )

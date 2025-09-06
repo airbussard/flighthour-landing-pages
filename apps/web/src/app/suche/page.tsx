@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { Container, Section, SearchBar, SearchFilters, SearchResults } from '@eventhour/ui'
 import { Grid2X2, List } from 'lucide-react'
 import { clsx } from 'clsx'
 
-export default function SearchPage() {
+function SearchPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -14,7 +14,7 @@ export default function SearchPage() {
   const [results, setResults] = useState<any[]>([])
   const [suggestions, setSuggestions] = useState<string[]>([])
   const [facets, setFacets] = useState<any>({})
-  
+
   const query = searchParams.get('q') || ''
   const category = searchParams.getAll('category')
   const minPrice = searchParams.get('minPrice')
@@ -34,14 +34,14 @@ export default function SearchPage() {
     try {
       const params = new URLSearchParams()
       if (query) params.append('q', query)
-      filters.categories.forEach(c => params.append('category', c))
+      filters.categories.forEach((c) => params.append('category', c))
       if (minPrice) params.append('minPrice', minPrice)
       if (filters.priceRange < 1000) params.append('maxPrice', String(filters.priceRange))
       params.append('sortBy', sortBy)
 
       const response = await fetch(`/api/search?${params}`)
       const data = await response.json()
-      
+
       setResults(data.experiences || [])
       setFacets(data.facets || {})
     } catch (error) {
@@ -82,14 +82,14 @@ export default function SearchPage() {
   }
 
   const handleFilterChange = (filterId: string, value: any) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       [filterId]: value,
     }))
 
     // Update URL params
     const params = new URLSearchParams(searchParams.toString())
-    
+
     if (filterId === 'categories') {
       params.delete('category')
       value.forEach((c: string) => params.append('category', c))
@@ -100,7 +100,7 @@ export default function SearchPage() {
         params.delete('maxPrice')
       }
     }
-    
+
     router.push(`/suche?${params}`)
   }
 
@@ -140,11 +140,12 @@ export default function SearchPage() {
       id: 'categories',
       label: 'Kategorien',
       type: 'checkbox' as const,
-      options: facets.categories?.map((c: any) => ({
-        value: c.name,
-        label: c.name,
-        count: c.count,
-      })) || [],
+      options:
+        facets.categories?.map((c: any) => ({
+          value: c.name,
+          label: c.name,
+          count: c.count,
+        })) || [],
     },
     {
       id: 'priceRange',
@@ -158,11 +159,12 @@ export default function SearchPage() {
       id: 'duration',
       label: 'Dauer',
       type: 'checkbox' as const,
-      options: facets.durations?.map((d: any) => ({
-        value: d.duration,
-        label: d.duration,
-        count: d.count,
-      })) || [],
+      options:
+        facets.durations?.map((d: any) => ({
+          value: d.duration,
+          label: d.duration,
+          count: d.count,
+        })) || [],
     },
     {
       id: 'rating',
@@ -222,9 +224,7 @@ export default function SearchPage() {
                     {query ? `Ergebnisse fuer "${query}"` : 'Alle Erlebnisse'}
                   </h1>
                   {!loading && (
-                    <p className="text-gray-600 mt-1">
-                      {results.length} Erlebnisse gefunden
-                    </p>
+                    <p className="text-gray-600 mt-1">{results.length} Erlebnisse gefunden</p>
                   )}
                 </div>
 
@@ -283,7 +283,7 @@ export default function SearchPage() {
 
               {/* Results Grid/List */}
               <SearchResults
-                results={results.map(exp => ({
+                results={results.map((exp) => ({
                   id: exp.id,
                   title: exp.title,
                   description: exp.description || exp.shortDescription,
@@ -304,9 +304,7 @@ export default function SearchPage() {
               {/* Pagination */}
               {!loading && results.length > 0 && (
                 <div className="mt-8 flex justify-center">
-                  <nav className="flex gap-2">
-                    {/* Pagination buttons would go here */}
-                  </nav>
+                  <nav className="flex gap-2">{/* Pagination buttons would go here */}</nav>
                 </div>
               )}
             </div>
@@ -314,5 +312,24 @@ export default function SearchPage() {
         </Container>
       </Section>
     </>
+  )
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <Section className="py-8">
+          <Container>
+            <div className="animate-pulse">
+              <div className="h-12 bg-gray-200 rounded-lg mb-4"></div>
+              <div className="h-96 bg-gray-200 rounded-lg"></div>
+            </div>
+          </Container>
+        </Section>
+      }
+    >
+      <SearchPageContent />
+    </Suspense>
   )
 }
