@@ -121,7 +121,7 @@ export default function SearchPage() {
   }
 
   // Get recent searches from localStorage
-  const getRecentSearches = () => {
+  const getRecentSearches = (): string[] => {
     if (typeof window === 'undefined') return []
     const recent = localStorage.getItem('recentSearches')
     return recent ? JSON.parse(recent) : []
@@ -131,7 +131,7 @@ export default function SearchPage() {
   const saveRecentSearch = (search: string) => {
     if (typeof window === 'undefined' || !search) return
     const recent = getRecentSearches()
-    const updated = [search, ...recent.filter(s => s !== search)].slice(0, 5)
+    const updated = [search, ...recent.filter((s: string) => s !== search)].slice(0, 5)
     localStorage.setItem('recentSearches', JSON.stringify(updated))
   }
 
