@@ -6,7 +6,8 @@
       "Bash(npm install:*)",
       "Bash(git restore:*)",
       "Bash(git checkout:*)",
-      "Bash(npm run db:generate:*)"
+      "Bash(npm run db:generate:*)",
+      "Bash(pnpm install:*)"
     ],
     "deny": [],
     "ask": []
