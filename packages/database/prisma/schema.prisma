@@ -1,0 +1,506 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== USER & AUTHENTICATION ====================
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  name          String?
+  role          UserRole @default(CUSTOMER)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  customerProfile CustomerProfile?
+  partner         Partner?
+  
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  PARTNER
+  CUSTOMER
+}
+
+model CustomerProfile {
+  id                  String    @id @default(cuid())
+  userId              String    @unique @map("user_id")
+  phone               String?
+  birthday            DateTime?
+  defaultPostalCode   String?   @map("default_postal_code")
+  preferences         Json?
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+  
+  // Relations
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  favorites           CustomerFavorite[]
+  orders              Order[]
+  voucherDownloads    VoucherDownload[]
+  
+  @@map("customer_profiles")
+}
+
+// ==================== PARTNER MANAGEMENT ====================
+
+model Partner {
+  id                             String               @id @default(cuid())
+  userId                         String               @unique @map("user_id")
+  
+  // Company Data
+  companyName                    String               @map("company_name")
+  legalForm                      String?              @map("legal_form")
+  tradeRegisterNumber            String?              @map("trade_register_number")
+  taxId                          String?              @map("tax_id")
+  vatId                          String?              @map("vat_id")
+  website                        String?
+  phone                          String?
+  email                          String?
+  
+  // Business Address
+  businessStreet                 String               @map("business_street")
+  businessNumber                 String               @map("business_number")
+  businessCity                   String               @map("business_city")
+  businessPostalCode             String               @map("business_postal_code")
+  businessCountry                String               @default("DE") @map("business_country")
+  
+  // Billing Address
+  billingStreet                  String?              @map("billing_street")
+  billingNumber                  String?              @map("billing_number")
+  billingCity                    String?              @map("billing_city")
+  billingPostalCode              String?              @map("billing_postal_code")
+  billingCountry                 String?              @map("billing_country")
+  useBusinessAddressForBilling   Boolean              @default(true) @map("use_business_address_for_billing")
+  
+  // Bank Details
+  bankName                       String?              @map("bank_name")
+  iban                           String?
+  bic                            String?
+  accountHolderName              String?              @map("account_holder_name")
+  bankVerified                   Boolean              @default(false) @map("bank_verified")
+  
+  // Contact Person
+  contactPersonName              String?              @map("contact_person_name")
+  contactPersonEmail             String?              @map("contact_person_email")
+  contactPersonPhone             String?              @map("contact_person_phone")
+  contactPersonPosition          String?              @map("contact_person_position")
+  
+  // Business Terms
+  commissionRate                 Decimal              @default(0.70) @map("commission_rate")
+  paymentTerms                   String               @default("30 Tage") @map("payment_terms")
+  contractStartDate              DateTime?            @map("contract_start_date")
+  contractEndDate                DateTime?            @map("contract_end_date")
+  
+  // System
+  isActive                       Boolean              @default(true) @map("is_active")
+  verificationStatus             VerificationStatus   @default(PENDING) @map("verification_status")
+  createdAt                      DateTime             @default(now()) @map("created_at")
+  updatedAt                      DateTime             @updatedAt @map("updated_at")
+  verifiedAt                     DateTime?            @map("verified_at")
+  
+  // Relations
+  user                           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  experiences                    Experience[]
+  payouts                        PartnerPayout[]
+  redeemedVouchers               Voucher[]            @relation("RedeemedVouchers")
+  
+  @@map("partners")
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+// ==================== CATEGORIES & EXPERIENCES ====================
+
+model Category {
+  id               String       @id @default(cuid())
+  name             String
+  slug             String       @unique
+  description      String?
+  icon             String?
+  parentCategoryId String?      @map("parent_category_id")
+  sortOrder        Int          @default(0) @map("sort_order")
+  isActive         Boolean      @default(true) @map("is_active")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  
+  // Relations
+  parentCategory   Category?    @relation("CategoryHierarchy", fields: [parentCategoryId], references: [id])
+  childCategories  Category[]   @relation("CategoryHierarchy")
+  experiences      Experience[]
+  
+  @@map("categories")
+}
+
+model Experience {
+  id                String            @id @default(cuid())
+  title             String
+  slug              String            @unique
+  description       String            @db.Text
+  shortDescription  String            @map("short_description")
+  
+  // Location & Geo
+  locationName      String            @map("location_name")
+  street            String?
+  city              String
+  postalCode        String            @map("postal_code")
+  country           String            @default("DE")
+  latitude          Decimal?
+  longitude         Decimal?
+  
+  // Business Logic
+  duration          Int               // Minutes
+  maxParticipants   Int?              @map("max_participants")
+  partnerId         String            @map("partner_id")
+  categoryId        String?           @map("category_id")
+  
+  // Pricing
+  retailPrice       Int               @map("retail_price") // Cents
+  taxRate           Decimal           @default(0.19) @map("tax_rate")
+  partnerPayout     Int               @map("partner_payout") // Cents
+  
+  // Search & Discovery
+  searchKeywords    String?           @map("search_keywords")
+  popularityScore   Int               @default(0) @map("popularity_score")
+  
+  // Status
+  isActive          Boolean           @default(true) @map("is_active")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+  
+  // Relations
+  partner           Partner           @relation(fields: [partnerId], references: [id])
+  category          Category?         @relation(fields: [categoryId], references: [id])
+  images            ExperienceImage[]
+  vouchers          Voucher[]
+  orderItems        OrderItem[]
+  favorites         CustomerFavorite[]
+  views             ExperienceView[]
+  
+  @@map("experiences")
+}
+
+model ExperienceImage {
+  id           String     @id @default(cuid())
+  experienceId String     @map("experience_id")
+  filename     String
+  altText      String?    @map("alt_text")
+  sortOrder    Int        @default(0) @map("sort_order")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  
+  // Relations
+  experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  
+  @@map("experience_images")
+}
+
+// ==================== ADDITIONAL SERVICES ====================
+
+model AdditionalService {
+  id          String                   @id @default(cuid())
+  name        String
+  description String?
+  price       Int                      // Cents
+  taxRate     Decimal                  @default(0.19) @map("tax_rate")
+  serviceType AdditionalServiceType    @map("service_type")
+  isActive    Boolean                  @default(true) @map("is_active")
+  createdAt   DateTime                 @default(now()) @map("created_at")
+  updatedAt   DateTime                 @updatedAt @map("updated_at")
+  
+  // Relations
+  orderServices OrderAdditionalService[]
+  
+  @@map("additional_services")
+}
+
+enum AdditionalServiceType {
+  PHYSICAL_PRODUCT
+  DIGITAL_SERVICE
+  PACKAGING
+}
+
+// ==================== ORDER SYSTEM ====================
+
+model Order {
+  id                 String          @id @default(cuid())
+  orderNumber        String          @unique @map("order_number")
+  customerUserId     String?         @map("customer_user_id")
+  
+  // Pricing
+  subtotal           Int             // Cents
+  taxAmount          Int             @map("tax_amount") // Cents
+  totalAmount        Int             @map("total_amount") // Cents
+  
+  // Payment
+  paymentIntentId    String?         @map("payment_intent_id")
+  paymentStatus      PaymentStatus   @default(PENDING) @map("payment_status")
+  paymentMethod      String?         @map("payment_method")
+  
+  // Customer Data
+  customerEmail      String          @map("customer_email")
+  customerName       String?         @map("customer_name")
+  
+  // Status
+  status             OrderStatus     @default(PENDING)
+  createdAt          DateTime        @default(now()) @map("created_at")
+  updatedAt          DateTime        @updatedAt @map("updated_at")
+  completedAt        DateTime?       @map("completed_at")
+  
+  // Relations
+  customer           CustomerProfile?         @relation(fields: [customerUserId], references: [userId])
+  items              OrderItem[]
+  additionalServices OrderAdditionalService[]
+  vouchers           Voucher[]
+  
+  @@map("orders")
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+model OrderItem {
+  id            String        @id @default(cuid())
+  orderId       String        @map("order_id")
+  itemType      OrderItemType @map("item_type")
+  
+  // Experience Items
+  experienceId  String?       @map("experience_id")
+  
+  // Value Voucher Items
+  voucherValue  Int?          @map("voucher_value") // Cents
+  
+  // Common
+  quantity      Int           @default(1)
+  unitPrice     Int           @map("unit_price") // Cents
+  taxRate       Decimal       @map("tax_rate")
+  
+  // Relations
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  experience    Experience?   @relation(fields: [experienceId], references: [id])
+  
+  @@map("order_items")
+}
+
+enum OrderItemType {
+  EXPERIENCE
+  VALUE_VOUCHER
+}
+
+model OrderAdditionalService {
+  id                   String            @id @default(cuid())
+  orderId              String            @map("order_id")
+  additionalServiceId  String            @map("additional_service_id")
+  quantity             Int               @default(1)
+  unitPrice            Int               @map("unit_price") // Cents
+  
+  // Relations
+  order                Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  additionalService    AdditionalService @relation(fields: [additionalServiceId], references: [id])
+  
+  @@map("order_additional_services")
+}
+
+// ==================== VOUCHER SYSTEM ====================
+
+model Voucher {
+  id                   String        @id @default(cuid())
+  voucherCode          String        @unique @map("voucher_code")
+  voucherType          VoucherType   @map("voucher_type")
+  
+  // Experience Vouchers
+  experienceId         String?       @map("experience_id")
+  
+  // Value Vouchers
+  voucherValue         Int?          @map("voucher_value") // Cents
+  remainingValue       Int?          @map("remaining_value") // Cents
+  
+  // Customer Data
+  customerEmail        String        @map("customer_email")
+  customerName         String?       @map("customer_name")
+  orderId              String?       @map("order_id")
+  
+  // Validity
+  issuedAt             DateTime      @default(now()) @map("issued_at")
+  expiresAt            DateTime      @map("expires_at")
+  
+  // Redemption
+  redeemedAt           DateTime?     @map("redeemed_at")
+  redeemedByPartnerId  String?       @map("redeemed_by_partner_id")
+  redemptionNotes      String?       @map("redemption_notes")
+  
+  // Tax
+  taxRate              Decimal       @default(0.19) @map("tax_rate")
+  
+  // Status
+  status               VoucherStatus @default(ACTIVE)
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+  
+  // Relations
+  experience           Experience?           @relation(fields: [experienceId], references: [id])
+  redeemedByPartner    Partner?              @relation("RedeemedVouchers", fields: [redeemedByPartnerId], references: [id])
+  order                Order?                @relation(fields: [orderId], references: [id])
+  downloads            VoucherDownload[]
+  payouts              PartnerPayout[]
+  
+  @@map("vouchers")
+}
+
+enum VoucherType {
+  EXPERIENCE
+  VALUE
+}
+
+enum VoucherStatus {
+  ACTIVE
+  REDEEMED
+  EXPIRED
+  CANCELLED
+}
+
+model VoucherDownload {
+  id              String           @id @default(cuid())
+  voucherId       String           @map("voucher_id")
+  customerUserId  String?          @map("customer_user_id")
+  downloadedAt    DateTime         @default(now()) @map("downloaded_at")
+  downloadCount   Int              @default(1) @map("download_count")
+  ipAddress       String?          @map("ip_address")
+  
+  // Relations
+  voucher         Voucher          @relation(fields: [voucherId], references: [id], onDelete: Cascade)
+  customer        CustomerProfile? @relation(fields: [customerUserId], references: [userId])
+  
+  @@map("voucher_downloads")
+}
+
+// ==================== PARTNER PAYOUTS ====================
+
+model PartnerPayout {
+  id         String       @id @default(cuid())
+  partnerId  String       @map("partner_id")
+  voucherId  String       @map("voucher_id")
+  amount     Int          // Cents
+  status     PayoutStatus @default(PENDING)
+  
+  // Timestamps
+  claimedAt  DateTime     @default(now()) @map("claimed_at")
+  approvedAt DateTime?    @map("approved_at")
+  paidAt     DateTime?    @map("paid_at")
+  createdAt  DateTime     @default(now()) @map("created_at")
+  
+  // Relations
+  partner    Partner      @relation(fields: [partnerId], references: [id])
+  voucher    Voucher      @relation(fields: [voucherId], references: [id])
+  
+  @@map("partner_payouts")
+}
+
+enum PayoutStatus {
+  PENDING
+  APPROVED
+  PAID
+  REJECTED
+}
+
+// ==================== SEARCH & DISCOVERY ====================
+
+model CustomerFavorite {
+  id              String          @id @default(cuid())
+  customerUserId  String          @map("customer_user_id")
+  experienceId    String          @map("experience_id")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  
+  // Relations
+  customer        CustomerProfile @relation(fields: [customerUserId], references: [userId], onDelete: Cascade)
+  experience      Experience      @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  
+  @@unique([customerUserId, experienceId])
+  @@map("customer_favorites")
+}
+
+model ExperienceView {
+  id           String     @id @default(cuid())
+  experienceId String     @map("experience_id")
+  userId       String?    @map("user_id")
+  ipAddress    String     @map("ip_address")
+  viewedAt     DateTime   @default(now()) @map("viewed_at")
+  
+  // Relations
+  experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+  
+  @@map("experience_views")
+}
+
+model SearchLog {
+  id                   String   @id @default(cuid())
+  query                String
+  location             String?
+  userId               String?  @map("user_id")
+  resultsCount         Int      @map("results_count")
+  clickedExperienceId  String?  @map("clicked_experience_id")
+  createdAt            DateTime @default(now()) @map("created_at")
+  
+  @@map("search_logs")
+}
+
+// ==================== DSGVO COOKIE CONSENT ====================
+
+model CookieConsent {
+  id              String   @id @default(cuid())
+  userId          String?  @map("user_id")
+  sessionId       String   @map("session_id")
+  ipAddress       String   @map("ip_address")
+  userAgent       String   @map("user_agent")
+  
+  // Consent Details
+  essential       Boolean  @default(true)
+  analytics       Boolean  @default(false)
+  marketing       Boolean  @default(false)
+  
+  // Timestamps
+  givenAt         DateTime @default(now()) @map("given_at")
+  expiresAt       DateTime @map("expires_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // DSGVO Compliance
+  consentVersion  String   @map("consent_version")
+  withdrawalAt    DateTime? @map("withdrawal_at")
+  
+  @@unique([sessionId, consentVersion])
+  @@map("cookie_consents")
+}
+
+model ConsentAuditLog {
+  id         String   @id @default(cuid())
+  sessionId  String   @map("session_id")
+  action     String
+  oldConsent Json?    @map("old_consent")
+  newConsent Json     @map("new_consent")
+  ipAddress  String   @map("ip_address")
+  userAgent  String   @map("user_agent")
+  timestamp  DateTime @default(now())
+  
+  @@map("consent_audit_logs")
+}

@@ -1,2 +1,2 @@
-// Database utilities will be exported here
-export {}
+export { prisma, default } from './client'
+export * from '@prisma/client'
