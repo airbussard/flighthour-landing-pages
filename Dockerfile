@@ -43,13 +43,15 @@ ENV NEXT_TELEMETRY_DISABLED 1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy built application
-COPY --from=builder /app/apps/web/public ./apps/web/public
+# Copy public folder if it exists
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./public
+
+# Copy standalone build
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 
 # Create uploads directory
-RUN mkdir -p /app/public/uploads && chown -R nextjs:nodejs /app/public
+RUN mkdir -p /app/uploads && chown -R nextjs:nodejs /app/uploads
 
 USER nextjs
 
@@ -58,5 +60,5 @@ EXPOSE 3000
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
 
-# Start the web app by default
+# Start the web app
 CMD ["node", "apps/web/server.js"]
