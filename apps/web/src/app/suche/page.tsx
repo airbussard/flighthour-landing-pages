@@ -219,7 +219,7 @@ export default function SearchPage() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h1 className="text-2xl font-bold">
-                    {query ? `Ergebnisse für "${query}"` : 'Alle Erlebnisse'}
+                    {query ? `Ergebnisse fuer "${query}"` : 'Alle Erlebnisse'}
                   </h1>
                   {!loading && (
                     <p className="text-gray-600 mt-1">
@@ -305,7 +305,7 @@ export default function SearchPage() {
               {!loading && results.length > 0 && (
                 <div className="mt-8 flex justify-center">
                   <nav className="flex gap-2">
-                    {/* Pagination buttons würden hier kommen */}
+                    {/* Pagination buttons would go here */}
                   </nav>
                 </div>
               )}
