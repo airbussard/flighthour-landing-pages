@@ -260,7 +260,7 @@ export const Footer: React.FC = () => {
             <p className="text-gray-400 text-sm">
               © 2024 Eventhour GmbH. Alle Rechte vorbehalten.
             </p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
+            <div className="flex flex-wrap gap-4 md:gap-6 mt-4 md:mt-0">
               <Link
                 href="/impressum"
                 className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm"
@@ -280,11 +280,22 @@ export const Footer: React.FC = () => {
                 AGB
               </Link>
               <Link
-                href="/widerrufsrecht"
+                href="/cookies"
                 className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm"
               >
-                Widerrufsrecht
+                Cookies
               </Link>
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    const event = new CustomEvent('showCookieSettings')
+                    window.dispatchEvent(event)
+                  }
+                }}
+                className="text-gray-400 hover:text-eventhour-yellow transition-colors text-sm"
+              >
+                Cookie-Einstellungen
+              </button>
             </div>
           </div>
         </div>

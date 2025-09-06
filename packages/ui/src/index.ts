@@ -38,6 +38,10 @@ export * from './components/search'
 // Cart Components
 export { CartButton, CartDrawer } from './components/cart'
 
+// Cookie Consent Components
+export { CookieBanner } from './components/CookieBanner'
+export { CookieSettings } from './components/CookieSettings'
+
 // Hooks
 export * from './hooks'
 export { useCart } from './hooks/useCart'
