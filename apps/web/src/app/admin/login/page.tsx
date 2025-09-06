@@ -2,13 +2,11 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Container, Input, Button, Logo } from '@eventhour/ui'
-import { useAuth } from '@eventhour/auth'
+import { Container, Button } from '@eventhour/ui'
 import { Shield, Lock, Mail } from 'lucide-react'
 
 export default function AdminLoginPage() {
   const router = useRouter()
-  const { signIn } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   
@@ -22,19 +20,13 @@ export default function AdminLoginPage() {
     setLoading(true)
     setError('')
 
-    try {
-      const result = await signIn(formData.email, formData.password)
-      
-      // Check if user is an admin
-      if (result.user.role !== 'ADMIN') {
-        setError('Keine Administratorberechtigung')
-        return
-      }
-
+    // Simple admin login check (for development)
+    if (formData.email === 'admin@eventhour.de' && formData.password === 'admin123') {
+      // Store admin auth in localStorage
+      localStorage.setItem('admin-auth', 'true')
       router.push('/admin')
-    } catch (err) {
+    } else {
       setError('E-Mail oder Passwort falsch')
-    } finally {
       setLoading(false)
     }
   }

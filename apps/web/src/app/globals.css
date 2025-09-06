@@ -3,6 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Font-Face temporarily disabled - files not available yet
 @font-face {
   font-family: 'ITC Avant Garde Gothic';
   src: url('/fonts/ITCAvantGardeGothic.woff2') format('woff2');
@@ -18,6 +19,7 @@
   font-style: normal;
   font-display: swap;
 }
+*/
 
 :root {
   --eventhour-yellow: #FBB928;
@@ -30,7 +32,7 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-avant-garde font-bold;
+    @apply font-poppins font-bold;
   }
   
   h1 {

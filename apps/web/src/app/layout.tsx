@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { ConsentProvider } from '../components/ConsentProvider'
+import { PasswordProtectionProvider } from '../components/PasswordProtectionProvider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -53,9 +54,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
       </head>
       <body className="font-poppins antialiased">
-        <ConsentProvider>
-          {children}
-        </ConsentProvider>
+        <PasswordProtectionProvider>
+          <ConsentProvider>
+            {children}
+          </ConsentProvider>
+        </PasswordProtectionProvider>
       </body>
     </html>
   )
