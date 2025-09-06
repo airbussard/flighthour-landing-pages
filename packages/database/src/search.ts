@@ -55,23 +55,23 @@ export class SearchService {
                 { title: { contains: query, mode: 'insensitive' } },
                 { description: { contains: query, mode: 'insensitive' } },
                 { shortDescription: { contains: query, mode: 'insensitive' } },
-                { highlights: { hasSome: [query] } },
+                { searchKeywords: { contains: query, mode: 'insensitive' } },
               ],
             }
           : {},
         // Category filter
         categories && categories.length > 0
-          ? { category: { in: categories } }
+          ? { category: { name: { in: categories } } }
           : {},
         // Price range
-        minPrice !== undefined ? { price: { gte: minPrice } } : {},
-        maxPrice !== undefined ? { price: { lte: maxPrice } } : {},
+        minPrice !== undefined ? { retailPrice: { gte: minPrice * 100 } } : {},
+        maxPrice !== undefined ? { retailPrice: { lte: maxPrice * 100 } } : {},
         // Duration filter
         duration && duration.length > 0
-          ? { duration: { in: duration } }
+          ? { duration: { in: duration.map(d => parseInt(d)) } }
           : {},
-        // Rating filter
-        rating !== undefined ? { averageRating: { gte: rating } } : {},
+        // Popularity filter (using popularityScore instead of rating)
+        rating !== undefined ? { popularityScore: { gte: rating * 20 } } : {},
         // Partner filter
         partnerId ? { partnerId } : {},
         // Only active experiences
@@ -83,23 +83,20 @@ export class SearchService {
     let orderBy: Prisma.ExperienceOrderByWithRelationInput = {}
     switch (sortBy) {
       case 'price_asc':
-        orderBy = { price: 'asc' }
+        orderBy = { retailPrice: 'asc' }
         break
       case 'price_desc':
-        orderBy = { price: 'desc' }
+        orderBy = { retailPrice: 'desc' }
         break
       case 'rating':
-        orderBy = { averageRating: 'desc' }
+        orderBy = { popularityScore: 'desc' }
         break
       case 'newest':
         orderBy = { createdAt: 'desc' }
         break
       default:
-        // For relevance, we'll order by rating and review count
-        orderBy = [
-          { averageRating: 'desc' },
-          { reviewCount: 'desc' },
-        ] as any
+        // For relevance, we'll order by popularity score
+        orderBy = { popularityScore: 'desc' }
     }
 
     // Execute search with pagination
@@ -149,14 +146,18 @@ export class SearchService {
           {
             OR: [
               { title: { contains: query, mode: 'insensitive' } },
-              { category: { contains: query, mode: 'insensitive' } },
+              { category: { name: { contains: query, mode: 'insensitive' } } },
             ],
           },
         ],
       },
       select: {
         title: true,
-        category: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
       },
       take: limit * 2, // Get more to filter duplicates
     })
@@ -167,8 +168,8 @@ export class SearchService {
       if (exp.title.toLowerCase().includes(query.toLowerCase())) {
         suggestions.add(exp.title)
       }
-      if (exp.category.toLowerCase().includes(query.toLowerCase())) {
-        suggestions.add(exp.category)
+      if (exp.category?.name && exp.category.name.toLowerCase().includes(query.toLowerCase())) {
+        suggestions.add(exp.category.name)
       }
     })
 
@@ -178,15 +179,24 @@ export class SearchService {
   static async getPopularSearches(limit = 10): Promise<string[]> {
     // In a real app, this would track actual search queries
     // For now, return popular categories
-    const categories = await prisma.experience.groupBy({
-      by: ['category'],
-      where: { isActive: true },
-      _count: { category: true },
-      orderBy: { _count: { category: 'desc' } },
+    const categories = await prisma.category.findMany({
+      where: {
+        experiences: {
+          some: { isActive: true },
+        },
+      },
+      orderBy: {
+        experiences: {
+          _count: 'desc',
+        },
+      },
       take: limit,
+      select: {
+        name: true,
+      },
     })
 
-    return categories.map((c) => c.category)
+    return categories.map((c) => c.name)
   }
 
   static async getNearbyExperiences(
@@ -203,7 +213,7 @@ export class SearchService {
         // In production, you'd have lat/lng columns and use proper distance calculation
       },
       orderBy: {
-        averageRating: 'desc',
+        popularityScore: 'desc',
       },
       take: limit,
       include: {
@@ -229,18 +239,29 @@ export class SearchService {
   ) {
     const [categories, priceData, durations] = await Promise.all([
       // Category facets
-      prisma.experience.groupBy({
-        by: ['category'],
-        where: baseWhere,
-        _count: { category: true },
-        orderBy: { _count: { category: 'desc' } },
+      prisma.category.findMany({
+        where: {
+          experiences: {
+            some: baseWhere,
+          },
+        },
+        select: {
+          name: true,
+          _count: {
+            select: {
+              experiences: {
+                where: baseWhere,
+              },
+            },
+          },
+        },
       }),
       // Price statistics
       prisma.experience.aggregate({
         where: baseWhere,
-        _min: { price: true },
-        _max: { price: true },
-        _avg: { price: true },
+        _min: { retailPrice: true },
+        _max: { retailPrice: true },
+        _avg: { retailPrice: true },
       }),
       // Duration facets
       prisma.experience.groupBy({
@@ -253,9 +274,9 @@ export class SearchService {
 
     // Calculate price ranges
     const priceRanges = []
-    if (priceData._min?.price && priceData._max?.price) {
-      const min = priceData._min.price
-      const max = priceData._max.price
+    if (priceData._min?.retailPrice && priceData._max?.retailPrice) {
+      const min = priceData._min.retailPrice / 100 // Convert from cents to euros
+      const max = priceData._max.retailPrice / 100
       const ranges = [
         { label: 'Unter 50€', min: 0, max: 50 },
         { label: '50€ - 100€', min: 50, max: 100 },
@@ -269,7 +290,7 @@ export class SearchService {
           const count = await prisma.experience.count({
             where: {
               ...baseWhere,
-              price: { gte: range.min, lt: range.max },
+              retailPrice: { gte: range.min * 100, lt: range.max * 100 }, // Convert to cents
             },
           })
           if (count > 0) {
@@ -281,12 +302,12 @@ export class SearchService {
 
     return {
       categories: categories.map((c) => ({
-        name: c.category,
-        count: c._count.category,
+        name: c.name,
+        count: c._count.experiences,
       })),
       priceRanges,
       durations: durations.map((d) => ({
-        duration: d.duration,
+        duration: String(d.duration),
         count: d._count.duration,
       })),
     }
@@ -313,7 +334,7 @@ export class SearchService {
   ): Promise<Experience[]> {
     const experience = await prisma.experience.findUnique({
       where: { id: experienceId },
-      select: { category: true, price: true },
+      select: { categoryId: true, retailPrice: true },
     })
 
     if (!experience) return []
@@ -323,19 +344,18 @@ export class SearchService {
         AND: [
           { id: { not: experienceId } },
           { isActive: true },
-          { category: experience.category },
+          { categoryId: experience.categoryId },
           {
-            price: {
-              gte: experience.price * 0.5,
-              lte: experience.price * 1.5,
+            retailPrice: {
+              gte: Math.floor(experience.retailPrice * 0.5),
+              lte: Math.floor(experience.retailPrice * 1.5),
             },
           },
         ],
       },
-      orderBy: [
-        { averageRating: 'desc' },
-        { reviewCount: 'desc' },
-      ],
+      orderBy: {
+        popularityScore: 'desc',
+      },
       take: limit,
       include: {
         partner: {

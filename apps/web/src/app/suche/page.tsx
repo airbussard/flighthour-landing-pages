@@ -287,14 +287,14 @@ export default function SearchPage() {
                   id: exp.id,
                   title: exp.title,
                   description: exp.description || exp.shortDescription,
-                  price: exp.price,
-                  location: exp.location || 'Deutschland',
-                  duration: exp.duration,
-                  rating: exp.averageRating || 0,
-                  reviewCount: exp.reviewCount || 0,
+                  price: exp.retailPrice ? exp.retailPrice / 100 : 0, // Convert from cents to euros
+                  location: exp.city || 'Deutschland',
+                  duration: exp.duration ? `${exp.duration} Min.` : '',
+                  rating: exp.popularityScore ? exp.popularityScore / 20 : 0, // Convert popularity to rating scale
+                  reviewCount: 0, // No review count in schema
                   image: exp.images?.[0]?.url,
-                  category: exp.category,
-                  isNew: exp.isNew,
+                  category: exp.category?.name || '',
+                  isNew: false, // No isNew field in schema
                 }))}
                 loading={loading}
                 view={view}
