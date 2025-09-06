@@ -1,13 +1,11 @@
 'use client'
 
 import React from 'react'
-import { motion, MotionProps } from 'framer-motion'
+import { HTMLMotionProps, motion } from 'framer-motion'
 import { clsx } from 'clsx'
 import { LucideIcon } from 'lucide-react'
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    MotionProps {
+export interface ButtonProps extends HTMLMotionProps<"button"> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean

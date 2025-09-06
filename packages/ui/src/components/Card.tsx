@@ -1,12 +1,10 @@
 'use client'
 
 import React from 'react'
-import { motion, MotionProps } from 'framer-motion'
+import { HTMLMotionProps, motion } from 'framer-motion'
 import { clsx } from 'clsx'
 
-export interface CardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    MotionProps {
+export interface CardProps extends HTMLMotionProps<"div"> {
   variant?: 'elevated' | 'flat' | 'outlined'
   hoverable?: boolean
   padding?: 'sm' | 'md' | 'lg' | 'none'
