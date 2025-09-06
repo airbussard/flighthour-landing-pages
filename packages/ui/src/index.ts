@@ -35,8 +35,12 @@ export { Footer } from './components/Footer'
 // Search Components
 export * from './components/search'
 
+// Cart Components
+export { CartButton, CartDrawer } from './components/cart'
+
 // Hooks
 export * from './hooks'
+export { useCart } from './hooks/useCart'
 
 // Utils
 export { cn } from './utils/cn'

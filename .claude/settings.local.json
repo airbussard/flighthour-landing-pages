@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(npx create-turbo:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

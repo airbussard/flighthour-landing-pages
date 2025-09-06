@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Search,
-  ShoppingCart,
   User,
   Menu,
   X,
@@ -16,6 +15,7 @@ import {
 } from 'lucide-react'
 import { Logo } from './Logo'
 import { Button } from './Button'
+import { CartButton } from './cart/CartButton'
 import { clsx } from 'clsx'
 
 export interface HeaderProps {
@@ -23,10 +23,9 @@ export interface HeaderProps {
     name: string
     email: string
   } | null
-  cartCount?: number
 }
 
-export const Header: React.FC<HeaderProps> = ({ user, cartCount = 0 }) => {
+export const Header: React.FC<HeaderProps> = ({ user }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -119,17 +118,7 @@ export const Header: React.FC<HeaderProps> = ({ user, cartCount = 0 }) => {
             </Link>
 
             {/* Cart */}
-            <Link
-              href="/warenkorb"
-              className="relative p-2 text-gray-700 hover:text-eventhour-yellow transition-colors"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-eventhour-yellow text-eventhour-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
+            <CartButton />
 
             {/* User Menu */}
             <div className="relative">
