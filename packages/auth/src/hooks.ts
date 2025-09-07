@@ -19,14 +19,29 @@ export function useAuth() {
       return
     }
 
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      if (session) {
-        AuthService.getCurrentUser().then(setUser)
+    // Set a timeout to ensure loading doesn't stay true forever
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.warn('[useAuth] Timeout reached, forcing loading to false')
+        setLoading(false)
       }
-      setLoading(false)
-    })
+    }, 5000) // 5 second timeout
+
+    // Get initial session
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setSession(session)
+        if (session) {
+          AuthService.getCurrentUser().then(setUser)
+        }
+      })
+      .catch((error) => {
+        console.error('[useAuth] Failed to get session:', error)
+      })
+      .finally(() => {
+        clearTimeout(timeoutId)
+        setLoading(false) // Always set loading to false
+      })
 
     // Listen for auth changes
     const {
@@ -42,7 +57,10 @@ export function useAuth() {
       setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      clearTimeout(timeoutId)
+      subscription.unsubscribe()
+    }
   }, [])
 
   return {
