@@ -1,5 +1,6 @@
 import { getSupabaseClient } from './supabase'
-import { prisma, type UserRole } from '@eventhour/database'
+
+export type UserRole = 'ADMIN' | 'PARTNER' | 'CUSTOMER'
 
 export interface AuthUser {
   id: string
@@ -14,34 +15,44 @@ export class AuthService {
     if (!supabase) throw new Error('Authentication service not available')
 
     try {
-      // Create Supabase auth user
+      // Create Supabase auth user with metadata
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            name,
+            role: 'CUSTOMER'
+          }
+        }
       })
 
       if (authError) throw authError
       if (!authData.user) throw new Error('User creation failed')
 
-      // Create database user
-      const dbUser = await prisma.user.create({
-        data: {
+      // Create user record in Supabase database
+      const { data: dbUser, error: dbError } = await supabase
+        .from('users')
+        .insert({
           id: authData.user.id,
           email,
           name,
-          role: 'CUSTOMER',
-          customerProfile: {
-            create: {},
-          },
-        },
-      })
+          role: 'CUSTOMER'
+        })
+        .select()
+        .single()
+
+      if (dbError) {
+        console.error('Database user creation failed:', dbError)
+        // Continue anyway - auth user exists
+      }
 
       return {
         user: {
-          id: dbUser.id,
-          email: dbUser.email,
-          name: dbUser.name,
-          role: dbUser.role,
+          id: authData.user.id,
+          email: authData.user.email!,
+          name: name || null,
+          role: 'CUSTOMER' as UserRole,
         },
         session: authData.session,
       }
@@ -64,19 +75,32 @@ export class AuthService {
       if (error) throw error
       if (!data.user) throw new Error('Sign in failed')
 
-      // Get user details from database
-      const dbUser = await prisma.user.findUnique({
-        where: { id: data.user.id },
-      })
+      // Try to get user from database, or use auth metadata
+      const { data: dbUser } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', data.user.id)
+        .single()
 
-      if (!dbUser) throw new Error('User not found in database')
+      // Determine role - check hardcoded admins first
+      let role: UserRole = 'CUSTOMER'
+      
+      // Hardcoded admin emails for now
+      const adminEmails = ['admin@eventhour.de']
+      if (adminEmails.includes(email)) {
+        role = 'ADMIN'
+      } else if (dbUser?.role) {
+        role = dbUser.role as UserRole
+      } else if (data.user.user_metadata?.role) {
+        role = data.user.user_metadata.role as UserRole
+      }
 
       return {
         user: {
-          id: dbUser.id,
-          email: dbUser.email,
-          name: dbUser.name,
-          role: dbUser.role,
+          id: data.user.id,
+          email: data.user.email!,
+          name: dbUser?.name || data.user.user_metadata?.name || null,
+          role,
         },
         session: data.session,
       }
@@ -105,17 +129,31 @@ export class AuthService {
 
       if (!user) return null
 
-      const dbUser = await prisma.user.findUnique({
-        where: { id: user.id },
-      })
+      // Try to get user from database
+      const { data: dbUser } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single()
 
-      if (!dbUser) return null
+      // Determine role - check hardcoded admins first
+      let role: UserRole = 'CUSTOMER'
+      
+      // Hardcoded admin emails for now
+      const adminEmails = ['admin@eventhour.de']
+      if (adminEmails.includes(user.email || '')) {
+        role = 'ADMIN'
+      } else if (dbUser?.role) {
+        role = dbUser.role as UserRole
+      } else if (user.user_metadata?.role) {
+        role = user.user_metadata.role as UserRole
+      }
 
       return {
-        id: dbUser.id,
-        email: dbUser.email,
-        name: dbUser.name,
-        role: dbUser.role,
+        id: user.id,
+        email: user.email!,
+        name: dbUser?.name || user.user_metadata?.name || null,
+        role,
       }
     } catch (error) {
       console.error('Get current user error:', error)
