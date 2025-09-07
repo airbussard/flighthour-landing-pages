@@ -1,11 +1,10 @@
 'use client'
 
 import React from 'react'
-import { HTMLMotionProps, motion } from 'framer-motion'
 import { clsx } from 'clsx'
 import { LucideIcon } from 'lucide-react'
 
-export interface ButtonProps extends HTMLMotionProps<'button'> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
@@ -32,7 +31,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      'inline-flex items-center justify-center font-semibold rounded-[10px] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed'
+      'inline-flex items-center justify-center font-semibold rounded-[10px] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:transform'
 
     const variants = {
       primary:
@@ -50,7 +49,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     return (
-      <motion.button
+      <button
         ref={ref}
         type={type}
         disabled={disabled || isLoading}
@@ -61,8 +60,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           fullWidth && 'w-full',
           className
         )}
-        whileHover={{ scale: disabled || isLoading ? 1 : 1.05 }}
-        whileTap={{ scale: disabled || isLoading ? 1 : 0.95 }}
         {...props}
       >
         {isLoading ? (
@@ -96,7 +93,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
             {RightIcon && <RightIcon className="w-5 h-5 ml-2" />}
           </>
         )}
-      </motion.button>
+      </button>
     )
   }
 )

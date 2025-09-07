@@ -1,7 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
-import { motion, useInView, Variants } from 'framer-motion'
+import React, { useRef, useEffect, useState } from 'react'
 import { clsx } from 'clsx'
 
 export interface AnimatedSectionProps {
@@ -14,31 +13,33 @@ export interface AnimatedSectionProps {
   staggerChildren?: number
 }
 
-const animations: Record<string, Variants> = {
-  fadeIn: {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 },
-  },
-  slideUp: {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0 },
-  },
-  slideDown: {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0 },
-  },
-  slideLeft: {
-    hidden: { opacity: 0, x: 20 },
-    visible: { opacity: 1, x: 0 },
-  },
-  slideRight: {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 },
-  },
-  scale: {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: { opacity: 1, scale: 1 },
-  },
+// Simple Intersection Observer hook
+const useInView = (ref: React.RefObject<HTMLElement>, options?: { once?: boolean; amount?: number }) => {
+  const [isInView, setIsInView] = useState(false)
+  
+  useEffect(() => {
+    if (!ref.current) return
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true)
+          if (options?.once) {
+            observer.disconnect()
+          }
+        } else if (!options?.once) {
+          setIsInView(false)
+        }
+      },
+      { threshold: options?.amount || 0.1 }
+    )
+    
+    observer.observe(ref.current)
+    
+    return () => observer.disconnect()
+  }, [ref, options?.once, options?.amount])
+  
+  return isInView
 }
 
 export const AnimatedSection: React.FC<AnimatedSectionProps> = ({
@@ -48,27 +49,34 @@ export const AnimatedSection: React.FC<AnimatedSectionProps> = ({
   delay = 0,
   duration = 0.6,
   once = true,
-  staggerChildren = 0,
 }) => {
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once, amount: 0.1 })
 
+  const animationClasses = {
+    fadeIn: isInView ? 'opacity-100' : 'opacity-0',
+    slideUp: isInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5',
+    slideDown: isInView ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-5',
+    slideLeft: isInView ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-5',
+    slideRight: isInView ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-5',
+    scale: isInView ? 'opacity-100 scale-100' : 'opacity-0 scale-95',
+  }
+
   return (
-    <motion.div
+    <div
       ref={ref}
-      initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
-      variants={animations[animation]}
-      transition={{
-        duration,
-        delay,
-        staggerChildren,
-        ease: 'easeOut',
+      className={clsx(
+        'transition-all',
+        animationClasses[animation],
+        className
+      )}
+      style={{
+        transitionDuration: `${duration * 1000}ms`,
+        transitionDelay: `${delay * 1000}ms`,
       }}
-      className={className}
     >
       {children}
-    </motion.div>
+    </div>
   )
 }
 
@@ -85,36 +93,22 @@ export const AnimatedList: React.FC<AnimatedListProps> = ({
   staggerDelay = 0.1,
   animation = 'slideUp',
 }) => {
-  const ref = useRef(null)
+  const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { once: true, amount: 0.1 })
 
-  const containerVariants: Variants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: staggerDelay,
-      },
-    },
-  }
-
   return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? 'visible' : 'hidden'}
-      variants={containerVariants}
-      className={className}
-    >
+    <div ref={ref} className={className}>
       {React.Children.map(children, (child, index) => (
-        <motion.div
+        <AnimatedSection
           key={index}
-          variants={animations[animation]}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
+          animation={animation}
+          delay={isInView ? index * staggerDelay : 0}
+          duration={0.5}
         >
           {child}
-        </motion.div>
+        </AnimatedSection>
       ))}
-    </motion.div>
+    </div>
   )
 }
 
