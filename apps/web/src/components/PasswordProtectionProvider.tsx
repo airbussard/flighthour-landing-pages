@@ -29,10 +29,13 @@ export function PasswordProtectionProvider({ children }: PasswordProtectionProvi
   if (!isAuthenticated) {
     return (
       <>
-        {/* Render children in background (blurred) */}
-        <div className="min-h-screen">
-          {children}
+        {/* Render children in background with blur effect */}
+        <div className="relative min-h-screen">
+          <div className="pointer-events-none select-none" style={{ filter: 'blur(8px)' }}>
+            {children}
+          </div>
         </div>
+        {/* Password protection overlay */}
         <PasswordProtection onSuccess={handleAuthSuccess} />
       </>
     )

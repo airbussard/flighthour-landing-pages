@@ -32,8 +32,8 @@ export function PasswordProtection({ onSuccess }: PasswordProtectionProps) {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-      {/* Blurred background */}
-      <div className="absolute inset-0 backdrop-blur-xl bg-black/40"></div>
+      {/* Dark overlay for better contrast */}
+      <div className="absolute inset-0 bg-black/50"></div>
       
       {/* Password form */}
       <div className="relative z-10 w-full max-w-md mx-4">
