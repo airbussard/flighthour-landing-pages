@@ -30,6 +30,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   // Check if we're on the login page
   const isLoginPage = pathname === '/admin/login'
+  
+  // Check localStorage fallback
+  const [hasLocalAuth, setHasLocalAuth] = useState(false)
+  
+  useEffect(() => {
+    // Check localStorage for fallback auth
+    const localAuth = localStorage.getItem('admin-auth')
+    setHasLocalAuth(localAuth === 'true')
+  }, [pathname])
 
   // Redirect if not admin (but not on login page)
   useEffect(() => {
@@ -48,7 +57,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   ]
 
   const handleSignOut = async () => {
-    await signOut()
+    // Clear localStorage fallback
+    localStorage.removeItem('admin-auth')
+    
+    // Sign out from Supabase if available
+    if (user) {
+      await signOut()
+    }
+    
     router.push('/admin/login')
   }
 
@@ -69,8 +85,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     )
   }
 
-  // For other pages, require admin auth
-  if (!user || user.role !== 'ADMIN') {
+  // For other pages, require admin auth (check both Supabase and localStorage fallback)
+  const isAuthenticated = (user && user.role === 'ADMIN') || hasLocalAuth
+  
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
