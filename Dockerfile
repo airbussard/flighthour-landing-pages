@@ -24,9 +24,6 @@ RUN npm ci
 # Copy source code
 COPY . .
 
-# Generate Prisma Client
-RUN npm run db:generate --workspace=@eventhour/database || true
-
 # Build all apps
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
