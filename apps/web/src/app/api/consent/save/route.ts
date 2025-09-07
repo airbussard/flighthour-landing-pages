@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@eventhour/database'
 
 export async function POST(request: NextRequest) {
   try {

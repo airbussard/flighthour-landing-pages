@@ -1,281 +1,285 @@
-import { prisma } from './client'
-import { Partner, Experience, Voucher, PartnerPayout, Prisma } from '@prisma/client'
+import { getSupabaseClient } from './supabase'
+import type { Partner, Experience, Voucher, PartnerPayout } from './types'
 
 export class PartnerService {
-  // Partner Profile Management
   static async getPartnerByUserId(userId: string): Promise<Partner | null> {
-    return prisma.partner.findUnique({
-      where: { userId },
-      include: {
-        user: true,
-      },
-    })
-  }
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Database connection not available')
 
-  static async createPartner(data: {
-    userId: string
-    companyName: string
-    businessStreet: string
-    businessNumber: string
-    businessCity: string
-    businessPostalCode: string
-    email?: string
-    phone?: string
-  }): Promise<Partner> {
-    return prisma.partner.create({
-      data,
-    })
-  }
+    try {
+      const { data, error } = await supabase
+        .from('partners')
+        .select('*')
+        .eq('user_id', userId)
+        .single()
 
-  static async updatePartnerProfile(
-    partnerId: string,
-    data: Partial<Omit<Partner, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>
-  ): Promise<Partner> {
-    return prisma.partner.update({
-      where: { id: partnerId },
-      data,
-    })
-  }
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No rows returned
+          return null
+        }
+        throw error
+      }
 
-  // Experience Management
-  static async getPartnerExperiences(partnerId: string): Promise<Experience[]> {
-    return prisma.experience.findMany({
-      where: { partnerId },
-      include: {
-        category: true,
-        images: {
-          orderBy: { sortOrder: 'asc' },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    })
-  }
-
-  static async createExperience(data: {
-    partnerId: string
-    title: string
-    slug: string
-    description: string
-    shortDescription: string
-    locationName: string
-    city: string
-    postalCode: string
-    duration: number
-    retailPrice: number
-    categoryId?: string
-  }): Promise<Experience> {
-    // Calculate partner payout (70% of retail price)
-    const partnerPayout = Math.floor(data.retailPrice * 0.7)
-
-    return prisma.experience.create({
-      data: {
-        ...data,
-        partnerPayout,
-      },
-    })
-  }
-
-  static async updateExperience(
-    experienceId: string,
-    partnerId: string,
-    data: Partial<Omit<Experience, 'id' | 'partnerId' | 'createdAt' | 'updatedAt'>>
-  ): Promise<Experience> {
-    // Verify the experience belongs to the partner
-    const experience = await prisma.experience.findFirst({
-      where: { id: experienceId, partnerId },
-    })
-
-    if (!experience) {
-      throw new Error('Experience not found or unauthorized')
+      return data
+    } catch (error) {
+      console.error('Error fetching partner by user ID:', error)
+      throw error
     }
-
-    // Recalculate partner payout if price changed
-    if (data.retailPrice) {
-      data.partnerPayout = Math.floor(data.retailPrice * 0.7)
-    }
-
-    return prisma.experience.update({
-      where: { id: experienceId },
-      data,
-    })
   }
 
-  static async toggleExperienceStatus(
-    experienceId: string,
-    partnerId: string
-  ): Promise<Experience> {
-    const experience = await prisma.experience.findFirst({
-      where: { id: experienceId, partnerId },
-    })
+  static async getPartnerStatistics(partnerId: string) {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Database connection not available')
 
-    if (!experience) {
-      throw new Error('Experience not found or unauthorized')
-    }
+    try {
+      const now = new Date()
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+      const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+      const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0)
 
-    return prisma.experience.update({
-      where: { id: experienceId },
-      data: { isActive: !experience.isActive },
-    })
-  }
+      // Get partner details
+      const { data: partner, error: partnerError } = await supabase
+        .from('partners')
+        .select('*')
+        .eq('id', partnerId)
+        .single()
 
-  // Voucher Redemption
-  static async redeemVoucher(
-    voucherCode: string,
-    partnerId: string,
-    notes?: string
-  ): Promise<Voucher> {
-    const voucher = await prisma.voucher.findUnique({
-      where: { voucherCode },
-      include: {
-        experience: true,
-      },
-    })
+      if (partnerError) throw partnerError
 
-    if (!voucher) {
-      throw new Error('Gutschein nicht gefunden')
-    }
+      // Get experiences count
+      const { count: totalExperiences } = await supabase
+        .from('experiences')
+        .select('*', { count: 'exact', head: true })
+        .eq('partner_id', partnerId)
 
-    if (voucher.status !== 'ACTIVE') {
-      throw new Error(`Gutschein ist ${voucher.status === 'REDEEMED' ? 'bereits eingelöst' : 'abgelaufen'}`)
-    }
+      const { count: activeExperiences } = await supabase
+        .from('experiences')
+        .select('*', { count: 'exact', head: true })
+        .eq('partner_id', partnerId)
+        .eq('is_active', true)
 
-    if (voucher.expiresAt < new Date()) {
-      throw new Error('Gutschein ist abgelaufen')
-    }
+      // Get vouchers statistics
+      const { data: allVouchers } = await supabase
+        .from('vouchers')
+        .select('*')
+        .eq('redeemed_by_partner_id', partnerId)
 
-    // Check if voucher is for partner's experience
-    if (voucher.experience && voucher.experience.partnerId !== partnerId) {
-      throw new Error('Gutschein ist nicht für Ihre Erlebnisse gültig')
-    }
+      const totalVouchers = allVouchers?.length || 0
+      const redeemedThisMonth = allVouchers?.filter(v => 
+        v.redeemed_at && new Date(v.redeemed_at) >= startOfMonth
+      ).length || 0
 
-    // Redeem the voucher
-    const redeemedVoucher = await prisma.voucher.update({
-      where: { id: voucher.id },
-      data: {
-        status: 'REDEEMED',
-        redeemedAt: new Date(),
-        redeemedByPartnerId: partnerId,
-        redemptionNotes: notes,
-      },
-    })
+      // Get revenue data
+      const { data: payouts } = await supabase
+        .from('partner_payouts')
+        .select('amount, created_at, status')
+        .eq('partner_id', partnerId)
 
-    // Create payout record
-    if (voucher.experience) {
-      await prisma.partnerPayout.create({
-        data: {
-          partnerId,
-          voucherId: voucher.id,
-          amount: voucher.experience.partnerPayout,
-          status: 'PENDING',
-        },
-      })
-    }
+      const totalRevenue = payouts?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0
+      const revenueThisMonth = payouts?.filter(p => 
+        new Date(p.created_at) >= startOfMonth
+      ).reduce((sum, p) => sum + (p.amount || 0), 0) || 0
+      const revenueLastMonth = payouts?.filter(p => 
+        new Date(p.created_at) >= startOfLastMonth && 
+        new Date(p.created_at) <= endOfLastMonth
+      ).reduce((sum, p) => sum + (p.amount || 0), 0) || 0
 
-    return redeemedVoucher
-  }
+      const pendingPayouts = payouts?.filter(p => 
+        p.status === 'PENDING'
+      ).reduce((sum, p) => sum + (p.amount || 0), 0) || 0
 
-  static async getRedeemedVouchers(partnerId: string): Promise<Voucher[]> {
-    return prisma.voucher.findMany({
-      where: {
-        redeemedByPartnerId: partnerId,
-      },
-      include: {
-        experience: true,
-      },
-      orderBy: { redeemedAt: 'desc' },
-    })
-  }
+      // Calculate growth
+      const monthlyGrowth = revenueLastMonth > 0
+        ? ((revenueThisMonth - revenueLastMonth) / revenueLastMonth * 100)
+        : 0
 
-  // Payouts
-  static async getPayouts(partnerId: string): Promise<PartnerPayout[]> {
-    return prisma.partnerPayout.findMany({
-      where: { partnerId },
-      include: {
-        voucher: {
-          include: {
-            experience: true,
+      return {
+        partner,
+        statistics: {
+          experiences: {
+            total: totalExperiences || 0,
+            active: activeExperiences || 0,
+          },
+          vouchers: {
+            total: totalVouchers,
+            redeemedThisMonth,
+          },
+          revenue: {
+            total: totalRevenue / 100, // Convert from cents to euros
+            thisMonth: revenueThisMonth / 100,
+            lastMonth: revenueLastMonth / 100,
+            pending: pendingPayouts / 100,
+            monthlyGrowth,
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    })
+      }
+    } catch (error) {
+      console.error('Error fetching partner statistics:', error)
+      throw error
+    }
   }
 
-  static async getPendingPayoutAmount(partnerId: string): Promise<number> {
-    const result = await prisma.partnerPayout.aggregate({
-      where: {
-        partnerId,
-        status: 'PENDING',
-      },
-      _sum: {
-        amount: true,
-      },
-    })
+  static async getPartnerExperiences(partnerId: string): Promise<Experience[]> {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Database connection not available')
 
-    return result._sum.amount || 0
+    try {
+      const { data, error } = await supabase
+        .from('experiences')
+        .select(`
+          *,
+          categories!experiences_category_id_fkey (*)
+        `)
+        .eq('partner_id', partnerId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      return (data || []).map((exp: any) => ({
+        ...exp,
+        category: exp.categories,
+      }))
+    } catch (error) {
+      console.error('Error fetching partner experiences:', error)
+      throw error
+    }
   }
 
-  // Statistics
-  static async getPartnerStatistics(partnerId: string): Promise<{
-    totalRevenue: number
-    pendingPayout: number
-    totalRedemptions: number
-    activeExperiences: number
-    thisMonthRevenue: number
-    thisMonthRedemptions: number
-  }> {
-    const now = new Date()
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  static async getRecentVouchers(partnerId: string, limit: number = 10): Promise<Voucher[]> {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Database connection not available')
 
-    const [
-      totalRevenue,
-      pendingPayout,
-      totalRedemptions,
-      activeExperiences,
-      monthlyPayouts,
-      monthlyRedemptions,
-    ] = await Promise.all([
-      // Total revenue (all payouts)
-      prisma.partnerPayout.aggregate({
-        where: { partnerId },
-        _sum: { amount: true },
-      }),
-      // Pending payouts
-      this.getPendingPayoutAmount(partnerId),
-      // Total redemptions
-      prisma.voucher.count({
-        where: { redeemedByPartnerId: partnerId },
-      }),
-      // Active experiences
-      prisma.experience.count({
-        where: { partnerId, isActive: true },
-      }),
-      // This month's revenue
-      prisma.partnerPayout.aggregate({
-        where: {
-          partnerId,
-          createdAt: { gte: startOfMonth },
-        },
-        _sum: { amount: true },
-      }),
-      // This month's redemptions
-      prisma.voucher.count({
-        where: {
-          redeemedByPartnerId: partnerId,
-          redeemedAt: { gte: startOfMonth },
-        },
-      }),
-    ])
+    try {
+      const { data, error } = await supabase
+        .from('vouchers')
+        .select(`
+          *,
+          experiences!vouchers_experience_id_fkey (*)
+        `)
+        .eq('redeemed_by_partner_id', partnerId)
+        .order('redeemed_at', { ascending: false })
+        .limit(limit)
 
-    return {
-      totalRevenue: totalRevenue._sum.amount || 0,
-      pendingPayout,
-      totalRedemptions,
-      activeExperiences,
-      thisMonthRevenue: monthlyPayouts._sum.amount || 0,
-      thisMonthRedemptions: monthlyRedemptions,
+      if (error) throw error
+
+      return (data || []).map((voucher: any) => ({
+        ...voucher,
+        experience: voucher.experiences,
+      }))
+    } catch (error) {
+      console.error('Error fetching recent vouchers:', error)
+      throw error
+    }
+  }
+
+  static async redeemVoucher(voucherCode: string, partnerId: string): Promise<Voucher> {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Database connection not available')
+
+    try {
+      // First, get the voucher
+      const { data: voucher, error: voucherError } = await supabase
+        .from('vouchers')
+        .select('*')
+        .eq('voucher_code', voucherCode)
+        .single()
+
+      if (voucherError) throw voucherError
+      if (!voucher) throw new Error('Voucher not found')
+
+      // Check if already redeemed
+      if (voucher.status === 'REDEEMED') {
+        throw new Error('Voucher already redeemed')
+      }
+
+      // Check if expired
+      if (new Date(voucher.expires_at) < new Date()) {
+        throw new Error('Voucher expired')
+      }
+
+      // Update voucher status
+      const { data: updatedVoucher, error: updateError } = await supabase
+        .from('vouchers')
+        .update({
+          status: 'REDEEMED',
+          redeemed_at: new Date().toISOString(),
+          redeemed_by_partner_id: partnerId,
+        })
+        .eq('id', voucher.id)
+        .select()
+        .single()
+
+      if (updateError) throw updateError
+
+      // Create payout record
+      const { error: payoutError } = await supabase
+        .from('partner_payouts')
+        .insert({
+          partner_id: partnerId,
+          voucher_id: voucher.id,
+          amount: voucher.voucher_value || 0,
+          status: 'PENDING',
+        })
+
+      if (payoutError) throw payoutError
+
+      return updatedVoucher
+    } catch (error) {
+      console.error('Error redeeming voucher:', error)
+      throw error
+    }
+  }
+
+  static async getPayouts(partnerId: string): Promise<PartnerPayout[]> {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Database connection not available')
+
+    try {
+      const { data, error } = await supabase
+        .from('partner_payouts')
+        .select(`
+          *,
+          vouchers!partner_payouts_voucher_id_fkey (
+            *,
+            experiences!vouchers_experience_id_fkey (*)
+          )
+        `)
+        .eq('partner_id', partnerId)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+
+      return (data || []).map((payout: any) => ({
+        ...payout,
+        voucher: {
+          ...payout.vouchers,
+          experience: payout.vouchers?.experiences,
+        },
+      }))
+    } catch (error) {
+      console.error('Error fetching partner payouts:', error)
+      throw error
+    }
+  }
+
+  static async updatePartnerProfile(partnerId: string, updates: Partial<Partner>): Promise<Partner> {
+    const supabase = getSupabaseClient()
+    if (!supabase) throw new Error('Database connection not available')
+
+    try {
+      const { data, error } = await supabase
+        .from('partners')
+        .update(updates)
+        .eq('id', partnerId)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('Error updating partner profile:', error)
+      throw error
     }
   }
 }
-
-export default PartnerService

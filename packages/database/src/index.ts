@@ -1,6 +1,8 @@
-export { prisma, default } from './client'
-export * from '@prisma/client'
-export { SearchService } from './search'
-export type { SearchParams, SearchResult } from './search'
+// Export Supabase-based services
+export { AdminService } from './admin-service-supabase'
+export { SearchService } from './search-service'
+export type { SearchParams, SearchResult } from './search-service'
 export { PartnerService } from './partner-service'
-export { AdminService } from './admin-service'
+
+// Export types
+export * from './types'
