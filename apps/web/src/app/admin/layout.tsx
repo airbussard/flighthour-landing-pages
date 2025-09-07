@@ -25,7 +25,7 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname()
   const router = useRouter()
-  const { user, signOut } = useAuth()
+  const { user, signOut, loading } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // Check if we're on the login page
@@ -33,10 +33,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   // Redirect if not admin (but not on login page)
   useEffect(() => {
-    if (!isLoginPage && user && user.role !== 'ADMIN') {
+    if (!isLoginPage && !loading && user && user.role !== 'ADMIN') {
       router.push('/')
     }
-  }, [user, router, isLoginPage])
+  }, [user, router, isLoginPage, loading])
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -57,9 +57,34 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return <>{children}</>
   }
 
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-eventhour-yellow mx-auto mb-4"></div>
+          <p className="text-gray-600">Lade Admin-Bereich...</p>
+        </div>
+      </div>
+    )
+  }
+
   // For other pages, require admin auth
   if (!user || user.role !== 'ADMIN') {
-    return null
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Zugriff verweigert</h1>
+          <p className="text-gray-600 mb-4">Sie haben keine Berechtigung für diesen Bereich.</p>
+          <a 
+            href="/admin/login" 
+            className="text-eventhour-yellow hover:underline"
+          >
+            Zur Anmeldung
+          </a>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -130,8 +155,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="p-4 border-t border-gray-800">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="text-sm font-medium">{user.name || 'Admin'}</p>
-                <p className="text-xs text-gray-400">{user.email}</p>
+                <p className="text-sm font-medium">{user?.name || 'Admin'}</p>
+                <p className="text-xs text-gray-400">{user?.email || 'admin@eventhour.de'}</p>
               </div>
             </div>
             <button
