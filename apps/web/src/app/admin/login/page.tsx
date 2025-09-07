@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Container, Button } from '@eventhour/ui'
 import { Shield, Lock, Mail } from 'lucide-react'
-import { AuthService } from '@eventhour/auth'
 
 export default function AdminLoginPage() {
   const router = useRouter()
@@ -22,37 +21,45 @@ export default function AdminLoginPage() {
     setError('')
 
     try {
-      // Use Supabase authentication
-      const result = await AuthService.signIn(formData.email, formData.password)
-      
-      // Check if user is admin
-      if (result.user.role === 'ADMIN') {
-        // Success - redirect to admin dashboard
-        router.push('/admin')
-      } else {
-        setError('Sie haben keine Admin-Berechtigung')
-        setLoading(false)
-      }
-    } catch (err: any) {
-      console.error('Login error:', err)
-      
-      // Handle specific error messages
-      if (err.message?.includes('Invalid login credentials')) {
-        setError('E-Mail oder Passwort falsch')
-      } else if (err.message?.includes('User not found')) {
-        setError('Benutzer nicht gefunden')
-      } else if (err.message?.includes('Authentication service not available')) {
-        // Fallback for development if Supabase is not configured
-        console.warn('Supabase not configured, using fallback auth')
-        if (formData.email === 'admin@eventhour.de' && formData.password === 'admin123') {
+      // Call API route instead of using AuthService directly
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Check if user is admin
+        if (data.user?.role === 'ADMIN') {
+          // Store auth state
           localStorage.setItem('admin-auth', 'true')
+          // Redirect to admin dashboard
           router.push('/admin')
         } else {
-          setError('E-Mail oder Passwort falsch')
+          setError('Sie haben keine Admin-Berechtigung')
+          setLoading(false)
         }
       } else {
-        setError('Anmeldung fehlgeschlagen. Bitte versuchen Sie es später erneut.')
+        // Check if we should use fallback
+        if (data.fallback) {
+          console.warn('Authentication service not available, using fallback')
+          if (formData.email === 'admin@eventhour.de' && formData.password === 'admin123') {
+            localStorage.setItem('admin-auth', 'true')
+            router.push('/admin')
+            return
+          }
+        }
+        
+        setError(data.error || 'Anmeldung fehlgeschlagen')
+        setLoading(false)
       }
+    } catch (err) {
+      console.error('Login error:', err)
+      setError('Anmeldung fehlgeschlagen. Bitte versuchen Sie es später erneut.')
       setLoading(false)
     }
   }
