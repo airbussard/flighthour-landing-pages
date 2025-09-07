@@ -30,9 +30,9 @@ RUN npm run db:generate --workspace=@eventhour/database || true
 # Build all apps
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
-# Set dummy environment variables for build time (will be overridden at runtime)
-ENV NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder
+# Set Supabase environment variables for build time
+ENV NEXT_PUBLIC_SUPABASE_URL=https://chmbntoufwhhqlnbapdw.supabase.co
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNobWJudG91ZndoaHFsbmJhcGR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNjExNjAsImV4cCI6MjA3MjczNzE2MH0.SzUhKEvQycnoNYvYjefcBApKlX_yTovEL6_g1iPzWqY
 RUN npm run build
 
 # Runner stage for web app
