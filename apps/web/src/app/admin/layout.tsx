@@ -28,12 +28,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { user, signOut } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  // Redirect if not admin
+  // Check if we're on the login page
+  const isLoginPage = pathname === '/admin/login'
+
+  // Redirect if not admin (but not on login page)
   useEffect(() => {
-    if (user && user.role !== 'ADMIN') {
+    if (!isLoginPage && user && user.role !== 'ADMIN') {
       router.push('/')
     }
-  }, [user, router])
+  }, [user, router, isLoginPage])
 
   const navigation = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -49,6 +52,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     router.push('/admin/login')
   }
 
+  // If on login page, just render children without layout
+  if (isLoginPage) {
+    return <>{children}</>
+  }
+
+  // For other pages, require admin auth
   if (!user || user.role !== 'ADMIN') {
     return null
   }
