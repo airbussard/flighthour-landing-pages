@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AdminService } from '@eventhour/database'
+import { AdminService, convertKeysToCamelCase } from '@eventhour/database'
 import { AuthService } from '@eventhour/auth'
 
 export async function GET(request: NextRequest) {
@@ -28,9 +28,12 @@ export async function GET(request: NextRequest) {
       role,
     })
 
+    // Convert snake_case to camelCase for frontend compatibility
+    const transformedUsers = convertKeysToCamelCase(users)
+
     return NextResponse.json({
       success: true,
-      data: users,
+      data: transformedUsers,
       pagination: {
         page,
         limit,
@@ -38,11 +41,20 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(total / limit),
       },
     })
-  } catch (error) {
-    console.error('Admin users error:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch users' },
-      { status: 500 }
-    )
+  } catch (error: any) {
+    console.error('Admin users error:', error?.message || error)
+    
+    // Return empty list on error with more details
+    return NextResponse.json({
+      success: false,
+      data: [],
+      pagination: {
+        page: 1,
+        limit: 20,
+        total: 0,
+        totalPages: 0,
+      },
+      error: error?.message || 'Failed to fetch users'
+    }, { status: 500 })
   }
 }

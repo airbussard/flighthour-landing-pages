@@ -1,4 +1,4 @@
-import { getSupabaseClient } from './supabase'
+import { getSupabaseAdminClient } from './supabase-admin'
 import type { 
   User, 
   Partner, 
@@ -14,7 +14,7 @@ import type {
 export class AdminService {
   // Dashboard Statistics
   static async getDashboardStats() {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     const now = new Date()
@@ -133,7 +133,7 @@ export class AdminService {
     role?: UserRole
     orderBy?: string
   }) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -180,7 +180,7 @@ export class AdminService {
   }
 
   static async updateUserRole(userId: string, role: UserRole) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -227,7 +227,7 @@ export class AdminService {
   }
 
   static async deleteUser(userId: string) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -252,7 +252,7 @@ export class AdminService {
     verificationStatus?: VerificationStatus
     isActive?: boolean
   }) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -327,7 +327,7 @@ export class AdminService {
     verificationStatus?: VerificationStatus,
     isActive?: boolean
   ) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -351,7 +351,7 @@ export class AdminService {
   }
 
   static async getPartnerPayouts(partnerId?: string) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -399,7 +399,7 @@ export class AdminService {
   }
 
   static async processPayouts(payoutIds: string[]) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -428,7 +428,7 @@ export class AdminService {
     isActive?: boolean
     partnerId?: string
   }) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -498,7 +498,7 @@ export class AdminService {
   }
 
   static async toggleExperienceStatus(experienceId: string) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -535,7 +535,7 @@ export class AdminService {
     search?: string
     status?: OrderStatus
   }) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -594,7 +594,7 @@ export class AdminService {
   }
 
   static async updateOrderStatus(orderId: string, status: OrderStatus) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -615,7 +615,7 @@ export class AdminService {
 
   // Revenue Analytics
   static async getRevenueAnalytics(days: number = 30) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
@@ -662,7 +662,7 @@ export class AdminService {
 
   // User Growth Analytics
   static async getUserGrowthAnalytics(days: number = 30) {
-    const supabase = getSupabaseClient()
+    const supabase = getSupabaseAdminClient()
     if (!supabase) throw new Error('Database connection not available')
 
     try {
