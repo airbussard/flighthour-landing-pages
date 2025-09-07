@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AdminService } from '@eventhour/database'
+import { AdminService, convertKeysToCamelCase } from '@eventhour/database'
 import { AuthService } from '@eventhour/auth'
 
 export async function GET(request: NextRequest) {
@@ -30,9 +30,12 @@ export async function GET(request: NextRequest) {
       isActive,
     })
 
+    // Convert snake_case to camelCase for frontend compatibility
+    const transformedPartners = convertKeysToCamelCase(partners)
+
     return NextResponse.json({
       success: true,
-      data: partners,
+      data: transformedPartners,
       pagination: {
         page,
         limit,

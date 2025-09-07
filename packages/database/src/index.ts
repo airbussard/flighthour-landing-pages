@@ -6,3 +6,6 @@ export { PartnerService } from './partner-service'
 
 // Export types
 export * from './types'
+
+// Export utilities
+export { convertKeysToCamelCase, convertKeysToSnakeCase } from './utils'

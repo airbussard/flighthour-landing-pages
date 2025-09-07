@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AdminService } from '@eventhour/database'
+import { AdminService, convertKeysToCamelCase } from '@eventhour/database'
 import { AuthService } from '@eventhour/auth'
 
 export async function PUT(
@@ -27,7 +27,10 @@ export async function PUT(
 
     const updatedPartner = await AdminService.updatePartnerStatus(params.id, verificationStatus, isActive)
 
-    return NextResponse.json({ success: true, data: updatedPartner })
+    // Convert snake_case to camelCase for frontend compatibility
+    const transformedPartner = convertKeysToCamelCase(updatedPartner)
+
+    return NextResponse.json({ success: true, data: transformedPartner })
   } catch (error) {
     console.error('Update partner error:', error)
     return NextResponse.json(

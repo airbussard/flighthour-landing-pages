@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
       isPartner: !!partner,
       partner: partner ? {
         id: partner.id,
-        companyName: partner.companyName,
-        verificationStatus: partner.verificationStatus,
+        companyName: partner.company_name,
+        verificationStatus: partner.verification_status,
       } : null,
     })
   } catch (error) {

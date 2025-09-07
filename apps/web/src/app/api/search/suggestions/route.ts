@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ suggestions: [] })
     }
 
-    const suggestions = await SearchService.getSuggestions(query, limit)
+    const suggestions = await SearchService.getSuggestions(query)
 
     return NextResponse.json({ suggestions })
   } catch (error) {
