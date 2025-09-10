@@ -53,7 +53,7 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Logo & About */}
           <div className="lg:col-span-2">
-            <Logo size="lg" showText={false} />
+            <Logo size="lg" variant="light" />
             <p className="mt-4 text-gray-400">
               Eventhour ist dein Partner für unvergessliche Erlebnisse. Von Abenteuer bis Wellness -
               wir haben für jeden das passende Geschenk.
