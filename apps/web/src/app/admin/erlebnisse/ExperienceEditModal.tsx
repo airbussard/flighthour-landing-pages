@@ -12,7 +12,7 @@ interface Experience {
   street?: string
   city: string
   postalCode: string
-  country: string
+  country?: string
   latitude?: number
   longitude?: number
   duration: number
@@ -20,9 +20,22 @@ interface Experience {
   retailPrice: number
   purchasePrice: number
   categoryId?: string
-  partnerId: string
+  partnerId?: string
   searchKeywords?: string
   isActive: boolean
+  taxRate?: number
+  createdAt?: string
+  partner?: {
+    companyName: string
+    id: string
+  }
+  category?: {
+    name: string
+    id: string
+  }
+  _count?: {
+    vouchers: number
+  }
 }
 
 interface Category {

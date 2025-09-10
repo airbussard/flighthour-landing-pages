@@ -14,15 +14,22 @@ interface Experience {
   description: string
   shortDescription: string
   locationName: string
+  street?: string
   city: string
   postalCode: string
+  country?: string
+  latitude?: number
+  longitude?: number
   duration: number
   maxParticipants: number | null
   retailPrice: number
-  taxRate: number
+  taxRate?: number
   purchasePrice: number
+  categoryId?: string
+  partnerId?: string
+  searchKeywords?: string
   isActive: boolean
-  createdAt: string
+  createdAt?: string
   partner?: {
     companyName: string
     id: string
