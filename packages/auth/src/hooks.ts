@@ -46,9 +46,20 @@ export function useAuth() {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       setSession(session)
-      if (session) {
+      
+      // Handle session expiry
+      if (event === 'TOKEN_REFRESHED') {
+        console.log('[useAuth] Token refreshed successfully')
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null)
+        // Store session expiry message
+        if (!session) {
+          localStorage.setItem('session_expired', 'true')
+          localStorage.setItem('session_expired_message', 'Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.')
+        }
+      } else if (session) {
         const user = await AuthService.getCurrentUser()
         setUser(user)
       } else {

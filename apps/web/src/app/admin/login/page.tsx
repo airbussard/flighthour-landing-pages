@@ -1,19 +1,35 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Container, Button } from '@eventhour/ui'
-import { Shield, Lock, Mail } from 'lucide-react'
+import { Shield, Lock, Mail, Info } from 'lucide-react'
 
 export default function AdminLoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [sessionExpiredMessage, setSessionExpiredMessage] = useState('')
   
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    rememberMe: false,
   })
+
+  // Check for session expiry message on mount
+  useEffect(() => {
+    const expired = localStorage.getItem('session_expired')
+    const message = localStorage.getItem('session_expired_message')
+    
+    if (expired === 'true' && message) {
+      setSessionExpiredMessage(message)
+      // Clear the flags
+      localStorage.removeItem('session_expired')
+      localStorage.removeItem('session_expired_message')
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,6 +96,14 @@ export default function AdminLoginPage() {
               <p className="text-gray-600">Systemverwaltung für Eventhour</p>
             </div>
 
+            {/* Session Expired Message */}
+            {sessionExpiredMessage && (
+              <div className="mb-6 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-800">{sessionExpiredMessage}</p>
+              </div>
+            )}
+
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
@@ -114,6 +138,19 @@ export default function AdminLoginPage() {
                     className="w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-eventhour-yellow"
                   />
                 </div>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked={formData.rememberMe}
+                  onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                  className="h-4 w-4 text-eventhour-yellow focus:ring-eventhour-yellow border-gray-300 rounded"
+                />
+                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
+                  Dauerhaft eingeloggt bleiben
+                </label>
               </div>
 
               {error && (

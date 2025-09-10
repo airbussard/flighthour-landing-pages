@@ -4,7 +4,7 @@ import { AuthService } from '@eventhour/auth'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { email, password } = body
+    const { email, password, rememberMe } = body
 
     if (!email || !password) {
       return NextResponse.json(
@@ -13,8 +13,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Use AuthService to sign in (runs on server, can use Prisma)
-    const result = await AuthService.signIn(email, password)
+    // Use AuthService to sign in with rememberMe option
+    const result = await AuthService.signIn(email, password, rememberMe || false)
     
     return NextResponse.json({
       success: true,

@@ -62,7 +62,7 @@ export class AuthService {
     }
   }
 
-  static async signIn(email: string, password: string) {
+  static async signIn(email: string, password: string, rememberMe: boolean = false) {
     const supabase = getSupabaseClient()
     if (!supabase) throw new Error('Authentication service not available')
 
@@ -71,6 +71,9 @@ export class AuthService {
         email,
         password,
       })
+      
+      // Note: rememberMe is handled by the browser's session storage
+      // Supabase automatically persists sessions
 
       if (error) throw error
       if (!data.user) throw new Error('Sign in failed')

@@ -1,21 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Container, Section, Input, Button, Logo } from '@eventhour/ui'
 import { useAuth } from '@eventhour/auth'
-import { Building2 } from 'lucide-react'
+import { Building2, Info } from 'lucide-react'
 
 export default function PartnerLoginPage() {
   const router = useRouter()
   const { signIn } = useAuth()
+
+  // Check for session expiry message on mount
+  useEffect(() => {
+    const expired = localStorage.getItem('session_expired')
+    const message = localStorage.getItem('session_expired_message')
+    
+    if (expired === 'true' && message) {
+      setSessionExpiredMessage(message)
+      // Clear the flags
+      localStorage.removeItem('session_expired')
+      localStorage.removeItem('session_expired_message')
+    }
+  }, [])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [sessionExpiredMessage, setSessionExpiredMessage] = useState('')
   
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    rememberMe: false,
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,7 +39,7 @@ export default function PartnerLoginPage() {
     setError('')
 
     try {
-      const result = await signIn(formData.email, formData.password)
+      const result = await signIn(formData.email, formData.password, formData.rememberMe)
       
       // Check if user is a partner
       const response = await fetch('/api/partner/auth', {
@@ -62,6 +77,14 @@ export default function PartnerLoginPage() {
               <p className="text-gray-600">Verwalten Sie Ihre Erlebnisse</p>
             </div>
 
+            {/* Session Expired Message */}
+            {sessionExpiredMessage && (
+              <div className="mb-6 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <Info className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-amber-800">{sessionExpiredMessage}</p>
+              </div>
+            )}
+
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
               <Input
@@ -81,6 +104,19 @@ export default function PartnerLoginPage() {
                 required
                 placeholder="••••••••"
               />
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="rememberMe"
+                  checked={formData.rememberMe}
+                  onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                  className="h-4 w-4 text-eventhour-yellow focus:ring-eventhour-yellow border-gray-300 rounded"
+                />
+                <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
+                  Dauerhaft eingeloggt bleiben
+                </label>
+              </div>
 
               {error && (
                 <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
