@@ -157,7 +157,7 @@ CREATE TABLE experiences (
     -- Pricing (in Cents)
     retail_price INT NOT NULL,
     tax_rate DECIMAL(5,4) DEFAULT 0.19,
-    partner_payout INT NOT NULL,
+    purchase_price INT NOT NULL,
     
     -- Search & Discovery
     search_keywords TEXT,

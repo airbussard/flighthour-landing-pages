@@ -113,7 +113,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -141,7 +141,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -169,7 +169,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -197,7 +197,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -225,7 +225,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -253,7 +253,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -281,7 +281,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -309,7 +309,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -337,7 +337,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 
@@ -365,7 +365,7 @@ INSERT INTO experiences (
     latitude, longitude,
     duration, max_participants, 
     partner_id, category_id,
-    retail_price, tax_rate, partner_payout,
+    retail_price, tax_rate, purchase_price,
     search_keywords, popularity_score, is_active
 )
 SELECT 

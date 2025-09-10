@@ -528,6 +528,38 @@ export class AdminService {
     }
   }
 
+  static async updateExperiencePricing(
+    experienceId: string, 
+    retailPrice: number, 
+    purchasePrice: number
+  ) {
+    const supabase = getSupabaseAdminClient()
+    if (!supabase) throw new Error('Database connection not available')
+
+    try {
+      // Validate prices
+      if (purchasePrice > retailPrice) {
+        throw new Error('Einkaufspreis kann nicht höher als Verkaufspreis sein')
+      }
+
+      const { data, error } = await supabase
+        .from('experiences')
+        .update({ 
+          retail_price: retailPrice,
+          purchase_price: purchasePrice 
+        })
+        .eq('id', experienceId)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data
+    } catch (error) {
+      console.error('Error updating experience pricing:', error)
+      throw error
+    }
+  }
+
   // Order Management
   static async getOrders(params?: {
     skip?: number

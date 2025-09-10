@@ -110,7 +110,7 @@ export interface Experience {
   category_id: string | null
   retail_price: number
   tax_rate: number
-  partner_payout: number
+  purchase_price: number
   search_keywords: string | null
   popularity_score: number
   is_active: boolean

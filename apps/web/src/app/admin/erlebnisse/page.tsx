@@ -18,7 +18,7 @@ interface Experience {
   maxParticipants: number | null
   retailPrice: number
   taxRate: number
-  partnerPayout: number
+  purchasePrice: number
   isActive: boolean
   createdAt: string
   partner?: {
@@ -278,10 +278,13 @@ export default function AdminExperiencesPage() {
                     <td className="px-6 py-4">
                       <div>
                         <div className="text-sm font-medium text-gray-900">
-                          {formatPrice(experience.retailPrice)}
+                          VK: {formatPrice(experience.retailPrice)}
                         </div>
                         <div className="text-xs text-gray-500">
-                          Partner: {formatPrice(experience.partnerPayout)}
+                          EK: {formatPrice(experience.purchasePrice)}
+                        </div>
+                        <div className="text-xs text-green-600">
+                          Provision: {formatPrice(experience.retailPrice - experience.purchasePrice)}
                         </div>
                       </div>
                     </td>
