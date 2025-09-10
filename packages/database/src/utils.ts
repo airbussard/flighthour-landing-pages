@@ -28,7 +28,8 @@ export function convertKeysToCamelCase<T = any>(obj: any): T {
   const converted: any = {}
   for (const key in obj) {
     if (obj.hasOwnProperty(key)) {
-      const camelKey = snakeToCamel(key)
+      // Keep keys that start with underscore as-is (like _count)
+      const camelKey = key.startsWith('_') ? key : snakeToCamel(key)
       converted[camelKey] = convertKeysToCamelCase(obj[key])
     }
   }

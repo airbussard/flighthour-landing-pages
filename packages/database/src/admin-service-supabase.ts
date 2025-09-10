@@ -141,7 +141,7 @@ export class AdminService {
         .from('users')
         .select(`
           *,
-          customer_profiles!customer_profiles_user_id_fkey (*)
+          customer_profiles!left (*)
         `, { count: 'exact' })
 
       // Apply search filter
@@ -260,8 +260,8 @@ export class AdminService {
         .from('partners')
         .select(`
           *,
-          users!partners_user_id_fkey (*),
-          experiences (id, title, is_active)
+          users!left (*),
+          experiences!left (id, title, is_active)
         `, { count: 'exact' })
 
       // Apply search filter
@@ -543,14 +543,14 @@ export class AdminService {
         .from('orders')
         .select(`
           *,
-          order_items!order_items_order_id_fkey (
+          order_items!left (
             *,
-            experiences!order_items_experience_id_fkey (*)
+            experiences!left (*)
           ),
-          vouchers!vouchers_order_id_fkey (*),
-          customer_profiles!orders_customer_user_id_fkey (
+          vouchers!left (*),
+          customer_profiles!left (
             *,
-            users!customer_profiles_user_id_fkey (*)
+            users!left (*)
           )
         `, { count: 'exact' })
 
