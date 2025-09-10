@@ -1,5 +1,6 @@
 -- Insert Sample Data for Eventhour Platform
--- This file can be run multiple times safely (uses ON CONFLICT)
+-- This file can be run multiple times safely (uses ON CONFLICT DO NOTHING)
+-- If data already exists, it will be skipped without errors
 
 -- First, ensure we have the admin user
 INSERT INTO users (id, email, name, role)
@@ -48,9 +49,7 @@ INSERT INTO partners (
      '+49 209 77889900', 'info@outdoor-ruhr.de',
      'Abenteuerweg', '8', 'Gelsenkirchen', '45879', 'DE',
      true, 0.25, '30 Tage netto', true, 'VERIFIED')
-ON CONFLICT (id) DO UPDATE SET
-    is_active = EXCLUDED.is_active,
-    verification_status = EXCLUDED.verification_status;
+ON CONFLICT (user_id) DO NOTHING;
 
 -- Insert categories
 INSERT INTO categories (id, name, slug, description, icon, sort_order)
@@ -71,9 +70,7 @@ VALUES
      'Hightech-Erlebnisse für Technikfans', '🎮', 7),
     ('cat-animals', 'Tiere & Natur', 'tiere-natur',
      'Begegnungen mit der Tierwelt', '🦙', 8)
-ON CONFLICT (id) DO UPDATE SET
-    name = EXCLUDED.name,
-    description = EXCLUDED.description;
+ON CONFLICT (slug) DO NOTHING;
 
 -- Insert experiences
 INSERT INTO experiences (
@@ -224,12 +221,7 @@ INSERT INTO experiences (
      3900, 0.19, 2925, -- 39€ Verkaufspreis
      'alpaka wanderung tiere natur niederrhein familie kinder ausflug',
      70, true)
-ON CONFLICT (id) DO UPDATE SET
-    title = EXCLUDED.title,
-    description = EXCLUDED.description,
-    retail_price = EXCLUDED.retail_price,
-    is_active = EXCLUDED.is_active,
-    popularity_score = EXCLUDED.popularity_score;
+ON CONFLICT (slug) DO NOTHING;
 
 -- Add some images for experiences (URLs would be replaced with actual image uploads)
 INSERT INTO experience_images (id, experience_id, filename, alt_text, sort_order)
@@ -244,8 +236,7 @@ VALUES
     ('img-8', 'exp-escape-room', '/images/experiences/escape.jpg', 'Escape Room', 1),
     ('img-9', 'exp-quad-tour', '/images/experiences/quad.jpg', 'Quad Tour', 1),
     ('img-10', 'exp-alpaca-walk', '/images/experiences/alpaca.jpg', 'Alpaka Wanderung', 1)
-ON CONFLICT (id) DO UPDATE SET
-    filename = EXCLUDED.filename;
+ON CONFLICT (id) DO NOTHING;
 
 -- Update category counts (optional - for display purposes)
 UPDATE categories c
