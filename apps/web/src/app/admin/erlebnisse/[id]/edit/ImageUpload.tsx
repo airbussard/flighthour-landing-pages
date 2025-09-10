@@ -8,7 +8,7 @@ interface ExperienceImage {
   id?: string
   filename: string
   alt_text?: string
-  display_order?: number
+  sort_order?: number
   isNew?: boolean
 }
 
@@ -93,7 +93,7 @@ export default function ImageUpload({ experienceId, images, onImagesChange }: Im
         newImages.push({
           filename: data.filename,
           alt_text: file.name.replace(/\.[^/.]+$/, ''),
-          display_order: images.length + i,
+          sort_order: images.length + i,
           isNew: true
         })
       } catch (error) {
@@ -137,9 +137,9 @@ export default function ImageUpload({ experienceId, images, onImagesChange }: Im
     const [movedImage] = newImages.splice(fromIndex, 1)
     newImages.splice(toIndex, 0, movedImage)
     
-    // Update display order
+    // Update sort order
     newImages.forEach((img, index) => {
-      img.display_order = index
+      img.sort_order = index
     })
     
     onImagesChange(newImages)

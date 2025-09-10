@@ -59,16 +59,16 @@ export async function POST(
     const buffer = Buffer.from(bytes)
     await fs.writeFile(filepath, buffer)
 
-    // Get current max display order
+    // Get current max sort order
     const { data: existingImages } = await supabase
       .from('experience_images')
-      .select('display_order')
+      .select('sort_order')
       .eq('experience_id', experienceId)
-      .order('display_order', { ascending: false })
+      .order('sort_order', { ascending: false })
       .limit(1)
 
     const nextOrder = existingImages && existingImages.length > 0 
-      ? (existingImages[0].display_order || 0) + 1 
+      ? (existingImages[0].sort_order || 0) + 1 
       : 0
 
     // Save image reference to database
@@ -78,7 +78,7 @@ export async function POST(
         experience_id: experienceId,
         filename: publicPath,
         alt_text: file.name.replace(/\.[^/.]+$/, ''),
-        display_order: nextOrder
+        sort_order: nextOrder
       })
       .select()
       .single()
@@ -94,7 +94,7 @@ export async function POST(
       id: image.id,
       filename: publicPath,
       alt_text: image.alt_text,
-      display_order: image.display_order
+      sort_order: image.sort_order
     })
   } catch (error) {
     console.error('Image upload error:', error)

@@ -32,7 +32,7 @@ interface Experience {
     id: string
     filename: string
     altText?: string
-    sortOrder: number
+    sortOrder?: number
   }>
 }
 
