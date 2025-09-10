@@ -422,6 +422,7 @@ export class AdminService {
 
   // Experience Management
   static async getExperiences(params?: {
+    id?: string
     skip?: number
     take?: number
     search?: string
@@ -440,8 +441,19 @@ export class AdminService {
             *,
             users!partners_user_id_fkey (*)
           ),
-          categories!experiences_category_id_fkey (*)
+          categories!experiences_category_id_fkey (*),
+          experience_images!left (
+            id,
+            filename,
+            alt_text,
+            sort_order
+          )
         `, { count: 'exact' })
+
+      // Apply ID filter
+      if (params?.id) {
+        query = query.eq('id', params.id)
+      }
 
       // Apply search filter
       if (params?.search) {

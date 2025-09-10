@@ -26,12 +26,22 @@ export async function PUT(
       return NextResponse.json({ error: 'Database connection not available' }, { status: 503 })
     }
 
+    // First, get the current experience to check if slug is changing
+    const { data: currentExperience } = await supabase
+      .from('experiences')
+      .select('slug')
+      .eq('id', params.id)
+      .single()
+
     // Prepare update data
     const updateData: any = {}
     
     // Map camelCase to snake_case for database
     if (body.title !== undefined) updateData.title = body.title
-    if (body.slug !== undefined) updateData.slug = body.slug
+    // Only update slug if it's different from current
+    if (body.slug !== undefined && body.slug !== currentExperience?.slug) {
+      updateData.slug = body.slug
+    }
     if (body.description !== undefined) updateData.description = body.description
     if (body.shortDescription !== undefined) updateData.short_description = body.shortDescription
     if (body.locationName !== undefined) updateData.location_name = body.locationName
