@@ -7,8 +7,8 @@ import { Button, Card } from '@eventhour/ui'
 interface ExperienceImage {
   id?: string
   filename: string
-  alt_text?: string
-  sort_order?: number
+  altText?: string
+  sortOrder?: number
   isNew?: boolean
 }
 
@@ -92,8 +92,8 @@ export default function ImageUpload({ experienceId, images, onImagesChange }: Im
         const data = await response.json()
         newImages.push({
           filename: data.filename,
-          alt_text: file.name.replace(/\.[^/.]+$/, ''),
-          sort_order: images.length + i,
+          altText: file.name.replace(/\.[^/.]+$/, ''),
+          sortOrder: images.length + i,
           isNew: true
         })
       } catch (error) {
@@ -139,7 +139,7 @@ export default function ImageUpload({ experienceId, images, onImagesChange }: Im
     
     // Update sort order
     newImages.forEach((img, index) => {
-      img.sort_order = index
+      img.sortOrder = index
     })
     
     onImagesChange(newImages)
@@ -205,7 +205,7 @@ export default function ImageUpload({ experienceId, images, onImagesChange }: Im
                 {image.filename.startsWith('http') || image.filename.startsWith('/') ? (
                   <img
                     src={image.filename}
-                    alt={image.alt_text || `Bild ${index + 1}`}
+                    alt={image.altText || `Bild ${index + 1}`}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.currentTarget.src = '/images/placeholder.jpg'

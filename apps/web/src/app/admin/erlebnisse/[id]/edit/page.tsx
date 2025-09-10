@@ -75,7 +75,12 @@ export default function ExperienceEditPage() {
         .then(res => res.json())
         .then(data => {
           if (data.data && data.data[0]) {
-            setExperience(data.data[0])
+            const exp = data.data[0]
+            // Map experienceImages to images for the component
+            setExperience({
+              ...exp,
+              images: exp.experienceImages || []
+            })
           }
         })
         .finally(() => setLoading(false))
