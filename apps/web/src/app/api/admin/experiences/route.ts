@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AdminService, convertKeysToCamelCase } from '@eventhour/database'
 import { AuthService } from '@eventhour/auth'
+import { getSupabaseAdminClient } from '@eventhour/database/src/supabase-admin'
 
 export async function GET(request: NextRequest) {
   try {
@@ -76,16 +77,10 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { experienceId, action } = body
-
-    if (!experienceId || !action) {
-      return NextResponse.json({ 
-        error: 'Experience ID and action are required' 
-      }, { status: 400 })
-    }
-
-    if (action === 'toggleStatus') {
-      const updatedExperience = await AdminService.toggleExperienceStatus(experienceId)
+    
+    // Check if this is a toggle status action
+    if (body.experienceId && body.action === 'toggleStatus') {
+      const updatedExperience = await AdminService.toggleExperienceStatus(body.experienceId)
       const transformedExperience = convertKeysToCamelCase(updatedExperience)
       
       return NextResponse.json({
@@ -93,10 +88,57 @@ export async function POST(request: NextRequest) {
         data: transformedExperience,
       })
     }
+    
+    // Otherwise, this is a create new experience request
+    const supabase = getSupabaseAdminClient()
+    
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database connection not available' }, { status: 503 })
+    }
 
-    return NextResponse.json({ 
-      error: 'Invalid action' 
-    }, { status: 400 })
+    // Prepare insert data
+    const insertData: any = {
+      title: body.title,
+      slug: body.slug,
+      description: body.description,
+      short_description: body.shortDescription,
+      location_name: body.locationName,
+      street: body.street || null,
+      city: body.city,
+      postal_code: body.postalCode,
+      country: body.country || 'DE',
+      latitude: body.latitude || null,
+      longitude: body.longitude || null,
+      duration: body.duration,
+      max_participants: body.maxParticipants || null,
+      retail_price: body.retailPrice,
+      purchase_price: body.purchasePrice,
+      category_id: body.categoryId || null,
+      partner_id: body.partnerId,
+      search_keywords: body.searchKeywords || null,
+      is_active: body.isActive !== undefined ? body.isActive : true,
+      tax_rate: 0.19,
+      popularity_score: 0
+    }
+
+    // Insert the new experience
+    const { data, error } = await supabase
+      .from('experiences')
+      .insert(insertData)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Insert error:', error)
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
+
+    const transformedExperience = convertKeysToCamelCase(data)
+    
+    return NextResponse.json({
+      success: true,
+      data: transformedExperience,
+    })
   } catch (error: any) {
     console.error('Admin experience action error:', error?.message || error)
     

@@ -1,9 +1,11 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Package, Search, MapPin, Euro, Users, Tag, ToggleLeft, ToggleRight } from 'lucide-react'
+import { Package, Search, MapPin, Euro, Users, Tag, ToggleLeft, ToggleRight, Edit2, Plus } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
 import debounce from 'lodash/debounce'
+import ExperienceEditModal from './ExperienceEditModal'
+import { Button } from '@eventhour/ui'
 
 interface Experience {
   id: string
@@ -42,6 +44,10 @@ export default function AdminExperiencesPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'inactive'>('all')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [editModalOpen, setEditModalOpen] = useState(false)
+  const [selectedExperience, setSelectedExperience] = useState<Experience | null>(null)
+  const [categories, setCategories] = useState<any[]>([])
+  const [partners, setPartners] = useState<any[]>([])
 
   const fetchExperiences = useCallback(async () => {
     setLoading(true)
@@ -77,6 +83,20 @@ export default function AdminExperiencesPage() {
     fetchExperiences()
   }, [fetchExperiences])
 
+  useEffect(() => {
+    // Fetch categories
+    fetch('/api/categories')
+      .then(res => res.json())
+      .then(data => setCategories(data.categories || []))
+      .catch(err => console.error('Error loading categories:', err))
+
+    // Fetch partners
+    fetch('/api/admin/partners')
+      .then(res => res.json())
+      .then(data => setPartners(data.data || []))
+      .catch(err => console.error('Error loading partners:', err))
+  }, [])
+
   // Debounced search
   const debouncedSearch = useCallback(
     debounce((value: string) => {
@@ -85,6 +105,46 @@ export default function AdminExperiencesPage() {
     }, 300),
     []
   )
+
+  const handleEditExperience = (experience: Experience) => {
+    setSelectedExperience(experience)
+    setEditModalOpen(true)
+  }
+
+  const handleNewExperience = () => {
+    setSelectedExperience(null)
+    setEditModalOpen(true)
+  }
+
+  const handleSaveExperience = async (experienceData: Partial<Experience>) => {
+    try {
+      const url = selectedExperience
+        ? `/api/admin/experiences/${selectedExperience.id}`
+        : '/api/admin/experiences'
+      
+      const method = selectedExperience ? 'PUT' : 'POST'
+      
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(experienceData),
+      })
+
+      const data = await response.json()
+
+      if (data.success || response.ok) {
+        fetchExperiences()
+        setEditModalOpen(false)
+        setSelectedExperience(null)
+      } else {
+        throw new Error(data.error || 'Fehler beim Speichern')
+      }
+    } catch (error) {
+      console.error('Error saving experience:', error)
+      alert('Fehler beim Speichern des Erlebnisses')
+      throw error
+    }
+  }
 
   const toggleExperienceStatus = async (experienceId: string) => {
     setActionLoading(experienceId)
@@ -139,9 +199,18 @@ export default function AdminExperiencesPage() {
         <p className="text-gray-600">Prüfen und verwalten Sie alle Erlebnisse</p>
       </div>
 
-      {/* Filters */}
+      {/* Filters and Actions */}
       <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
         <div className="flex flex-col sm:flex-row gap-4">
+          {/* New Experience Button */}
+          <Button
+            onClick={handleNewExperience}
+            leftIcon={Plus}
+            className="sm:w-auto"
+          >
+            Neues Erlebnis
+          </Button>
+          
           {/* Search */}
           <div className="flex-1">
             <div className="relative">
@@ -298,20 +367,29 @@ export default function AdminExperiencesPage() {
                       {getStatusBadge(experience.isActive)}
                     </td>
                     <td className="px-6 py-4">
-                      <button
-                        onClick={() => toggleExperienceStatus(experience.id)}
-                        disabled={actionLoading === experience.id}
-                        className="text-gray-600 hover:text-eventhour-yellow transition-colors disabled:opacity-50"
-                        title={experience.isActive ? 'Deaktivieren' : 'Aktivieren'}
-                      >
-                        {actionLoading === experience.id ? (
-                          <div className="animate-spin h-5 w-5 border-2 border-eventhour-yellow border-t-transparent rounded-full" />
-                        ) : experience.isActive ? (
-                          <ToggleRight className="h-5 w-5" />
-                        ) : (
-                          <ToggleLeft className="h-5 w-5" />
-                        )}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleEditExperience(experience)}
+                          className="text-blue-600 hover:text-blue-800 transition-colors"
+                          title="Bearbeiten"
+                        >
+                          <Edit2 className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => toggleExperienceStatus(experience.id)}
+                          disabled={actionLoading === experience.id}
+                          className="text-gray-600 hover:text-eventhour-yellow transition-colors disabled:opacity-50"
+                          title={experience.isActive ? 'Deaktivieren' : 'Aktivieren'}
+                        >
+                          {actionLoading === experience.id ? (
+                            <div className="animate-spin h-5 w-5 border-2 border-eventhour-yellow border-t-transparent rounded-full" />
+                          ) : experience.isActive ? (
+                            <ToggleRight className="h-5 w-5" />
+                          ) : (
+                            <ToggleLeft className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -345,6 +423,19 @@ export default function AdminExperiencesPage() {
           </div>
         )}
       </div>
+
+      {/* Edit Modal */}
+      <ExperienceEditModal
+        experience={selectedExperience}
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false)
+          setSelectedExperience(null)
+        }}
+        onSave={handleSaveExperience}
+        categories={categories}
+        partners={partners}
+      />
     </div>
   )
 }
