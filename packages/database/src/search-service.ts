@@ -53,7 +53,12 @@ export class SearchService {
         .select(`
           *,
           partners!experiences_partner_id_fkey (*),
-          categories!experiences_category_id_fkey (*)
+          categories!experiences_category_id_fkey (*),
+          experience_images!left (
+            filename,
+            alt_text,
+            sort_order
+          )
         `, { count: 'exact' })
         .eq('is_active', true)
 

@@ -297,6 +297,7 @@ function SearchPageContent() {
               <SearchResults
                 results={results.map((exp) => ({
                   id: exp.id,
+                  slug: exp.slug,
                   title: exp.title,
                   description: exp.description || exp.shortDescription,
                   price: exp.retailPrice ? exp.retailPrice / 100 : 0, // Convert from cents to euros
@@ -304,13 +305,13 @@ function SearchPageContent() {
                   duration: exp.duration ? `${exp.duration} Min.` : '',
                   rating: exp.popularityScore ? exp.popularityScore / 20 : 0, // Convert popularity to rating scale
                   reviewCount: 0, // No review count in schema
-                  image: exp.images?.[0]?.url,
+                  image: exp.experience_images?.[0]?.filename || exp.experienceImages?.[0]?.filename,
                   category: exp.category?.name || '',
                   isNew: false, // No isNew field in schema
                 }))}
                 loading={loading}
                 view={view}
-                onResultClick={(result) => router.push(`/erlebnisse/${result.id}`)}
+                onResultClick={(result: any) => router.push(`/erlebnis/${result.slug || result.id}`)}
               />
 
               {/* Pagination */}
