@@ -244,7 +244,12 @@ export default function ImageUpload({ experienceId, images, onImagesChange }: Im
               
               {/* Delete button */}
               <button
-                onClick={() => handleRemoveImage(index)}
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  handleRemoveImage(index)
+                }}
                 className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
               >
                 <X className="h-4 w-4" />
