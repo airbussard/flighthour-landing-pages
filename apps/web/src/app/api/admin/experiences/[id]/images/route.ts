@@ -7,7 +7,11 @@ import { randomUUID } from 'crypto'
 export const dynamic = 'force-dynamic'
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'experiences')
+// In production (Docker), process.cwd() is /app/apps/web
+// In development, it's the project root
+const isProduction = process.env.NODE_ENV === 'production'
+const baseDir = isProduction ? process.cwd() : path.join(process.cwd(), 'apps', 'web')
+const uploadsDir = path.join(baseDir, 'public', 'uploads', 'experiences')
 
 async function ensureUploadsDir() {
   try {
@@ -58,6 +62,9 @@ export async function POST(
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     await fs.writeFile(filepath, buffer)
+    
+    console.log('Image saved to:', filepath)
+    console.log('Public path:', publicPath)
 
     // Get current max sort order
     const { data: existingImages } = await supabase
@@ -93,8 +100,8 @@ export async function POST(
     return NextResponse.json({
       id: image.id,
       filename: publicPath,
-      alt_text: image.alt_text,
-      sort_order: image.sort_order
+      altText: image.alt_text,
+      sortOrder: image.sort_order
     })
   } catch (error) {
     console.error('Image upload error:', error)
@@ -146,9 +153,9 @@ export async function DELETE(
 
     // Delete file from server
     if (image.filename && image.filename.startsWith('/uploads/')) {
-      const filepath = path.join(process.cwd(), 'public', image.filename)
-      await fs.unlink(filepath).catch(() => {
-        console.warn('Failed to delete file:', filepath)
+      const filepath = path.join(baseDir, 'public', image.filename)
+      await fs.unlink(filepath).catch((err) => {
+        console.warn('Failed to delete file:', filepath, err.message)
       })
     }
 

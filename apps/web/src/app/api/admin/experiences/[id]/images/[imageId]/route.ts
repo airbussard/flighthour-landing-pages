@@ -5,6 +5,10 @@ import path from 'path'
 
 export const dynamic = 'force-dynamic'
 
+// Use same base directory logic as main upload route
+const isProduction = process.env.NODE_ENV === 'production'
+const baseDir = isProduction ? process.cwd() : path.join(process.cwd(), 'apps', 'web')
+
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string; imageId: string } }
@@ -43,9 +47,9 @@ export async function DELETE(
 
     // Delete file from server
     if (image.filename && image.filename.startsWith('/uploads/')) {
-      const filepath = path.join(process.cwd(), 'public', image.filename)
-      await fs.unlink(filepath).catch(() => {
-        console.warn('Failed to delete file:', filepath)
+      const filepath = path.join(baseDir, 'public', image.filename)
+      await fs.unlink(filepath).catch((err) => {
+        console.warn('Failed to delete file:', filepath, err.message)
       })
     }
 

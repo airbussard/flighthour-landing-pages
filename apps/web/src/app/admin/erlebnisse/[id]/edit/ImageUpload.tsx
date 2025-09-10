@@ -90,10 +90,12 @@ export default function ImageUpload({ experienceId, images, onImagesChange }: Im
         }
 
         const data = await response.json()
+        console.log('Upload response:', data)
         newImages.push({
           filename: data.filename,
-          altText: file.name.replace(/\.[^/.]+$/, ''),
-          sortOrder: images.length + i,
+          altText: data.altText || file.name.replace(/\.[^/.]+$/, ''),
+          sortOrder: data.sortOrder ?? (images.length + i),
+          id: data.id,
           isNew: true
         })
       } catch (error) {
