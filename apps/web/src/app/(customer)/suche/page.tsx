@@ -39,7 +39,13 @@ function SearchPageContent() {
       if (filters.priceRange < 1000) params.append('maxPrice', String(filters.priceRange))
       params.append('sortBy', sortBy)
 
-      const response = await fetch(`/api/search?${params}`)
+      const response = await fetch(`/api/search?${params}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       const data = await response.json()
 
       setResults(data.experiences || [])
@@ -59,7 +65,13 @@ function SearchPageContent() {
     }
 
     try {
-      const response = await fetch(`/api/search/suggestions?q=${searchQuery}`)
+      const response = await fetch(`/api/search/suggestions?q=${searchQuery}&t=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      })
       const data = await response.json()
       setSuggestions(data.suggestions || [])
     } catch (error) {

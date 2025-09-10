@@ -24,7 +24,13 @@ export async function GET(request: NextRequest) {
 
     const results = await SearchService.searchExperiences(params)
 
-    return NextResponse.json(results)
+    return NextResponse.json(results, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    })
   } catch (error) {
     console.error('Search error:', error)
     return NextResponse.json({ error: 'Search failed' }, { status: 500 })

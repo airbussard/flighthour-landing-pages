@@ -62,7 +62,13 @@ export default function ExperienceDetailPage() {
     const fetchExperience = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/experiences/${slug}`)
+        const response = await fetch(`/api/experiences/${slug}?t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          }
+        })
         
         if (!response.ok) {
           if (response.status === 404) {
