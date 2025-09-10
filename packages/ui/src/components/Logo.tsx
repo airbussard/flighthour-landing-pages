@@ -9,6 +9,7 @@ export interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   href?: string
   showText?: boolean
+  variant?: 'default' | 'light'
 }
 
 export const Logo: React.FC<LogoProps> = ({
@@ -16,6 +17,7 @@ export const Logo: React.FC<LogoProps> = ({
   size = 'md',
   href = '/',
   showText = true,
+  variant = 'default',
 }) => {
   const sizes = {
     sm: 'text-2xl',
@@ -23,6 +25,8 @@ export const Logo: React.FC<LogoProps> = ({
     lg: 'text-4xl',
     xl: 'text-5xl',
   }
+
+  const hourColor = variant === 'light' ? 'text-gray-100' : 'text-gray-800'
 
   const logoContent = (
     <div
@@ -33,7 +37,7 @@ export const Logo: React.FC<LogoProps> = ({
       )}
     >
       <span className="text-eventhour-yellow">EVENT</span>
-      <span className="text-gray-800">HOUR</span>
+      <span className={hourColor}>HOUR</span>
       {showText && (
         <span className="block text-xs font-normal text-gray-600 mt-1 tracking-wider">
           Unvergessliche Erlebnisse
