@@ -56,7 +56,8 @@ export async function POST(
     const extension = file.name.split('.').pop() || 'jpg'
     const filename = `${experienceId}_${randomUUID()}.${extension}`
     const filepath = path.join(uploadsDir, filename)
-    const publicPath = `/uploads/experiences/${filename}`
+    // Use the API route for serving images
+    const publicPath = `/api/images/uploads/experiences/${filename}`
 
     // Convert File to Buffer and save
     const bytes = await file.arrayBuffer()
@@ -152,11 +153,18 @@ export async function DELETE(
     }
 
     // Delete file from server
-    if (image.filename && image.filename.startsWith('/uploads/')) {
-      const filepath = path.join(baseDir, 'public', image.filename)
-      await fs.unlink(filepath).catch((err) => {
-        console.warn('Failed to delete file:', filepath, err.message)
-      })
+    if (image.filename) {
+      // Extract the actual filename from the API path
+      let actualPath = image.filename
+      if (actualPath.startsWith('/api/images/')) {
+        actualPath = actualPath.replace('/api/images/', '/')
+      }
+      if (actualPath.startsWith('/uploads/')) {
+        const filepath = path.join(baseDir, 'public', actualPath)
+        await fs.unlink(filepath).catch((err) => {
+          console.warn('Failed to delete file:', filepath, err.message)
+        })
+      }
     }
 
     return NextResponse.json({ success: true })

@@ -46,11 +46,18 @@ export async function DELETE(
     }
 
     // Delete file from server
-    if (image.filename && image.filename.startsWith('/uploads/')) {
-      const filepath = path.join(baseDir, 'public', image.filename)
-      await fs.unlink(filepath).catch((err) => {
-        console.warn('Failed to delete file:', filepath, err.message)
-      })
+    if (image.filename) {
+      // Extract the actual filename from the API path
+      let actualPath = image.filename
+      if (actualPath.startsWith('/api/images/')) {
+        actualPath = actualPath.replace('/api/images/', '/')
+      }
+      if (actualPath.startsWith('/uploads/')) {
+        const filepath = path.join(baseDir, 'public', actualPath)
+        await fs.unlink(filepath).catch((err) => {
+          console.warn('Failed to delete file:', filepath, err.message)
+        })
+      }
     }
 
     return NextResponse.json({ success: true })
