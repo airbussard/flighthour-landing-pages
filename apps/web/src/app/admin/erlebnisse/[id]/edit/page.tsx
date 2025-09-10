@@ -205,7 +205,6 @@ export default function ExperienceEditPage() {
             experienceId={experienceId}
             images={experience.images || []}
             onImagesChange={handleImagesChange}
-            disabled={isNew}
           />
           {isNew && (
             <p className="text-sm text-gray-500 mt-2">
