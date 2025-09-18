@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Mail-Adresse bestätigen - EventHour</title>
+  <!--[if mso]>
+  <noscript>
+    <xml>
+      <o:OfficeDocumentSettings>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+      </o:OfficeDocumentSettings>
+    </xml>
+  </noscript>
+  <![endif]-->
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        
+        <!-- Email Container -->
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="padding: 40px 40px 20px 40px; text-align: center; background: linear-gradient(135deg, #FBB928 0%, #FFD700 100%); border-radius: 8px 8px 0 0;">
+              <h1 style="margin: 0; color: #000001; font-size: 36px; font-weight: 900; letter-spacing: -1px;">
+                EVENT<span style="color: #333333;">HOUR</span>
+              </h1>
+              <p style="margin: 10px 0 0 0; color: #333333; font-size: 14px;">
+                Unvergessliche Erlebnisse
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Main Content -->
+          <tr>
+            <td style="padding: 40px;">
+              
+              <!-- Welcome Message -->
+              <h2 style="margin: 0 0 20px 0; color: #333333; font-size: 24px; font-weight: 600;">
+                Willkommen bei EventHour! 🎉
+              </h2>
+              
+              <p style="margin: 0 0 20px 0; color: #666666; font-size: 16px; line-height: 1.6;">
+                Vielen Dank für Ihre Registrierung! Sie sind nur noch einen Klick von unvergesslichen Erlebnissen entfernt.
+              </p>
+              
+              <p style="margin: 0 0 30px 0; color: #666666; font-size: 16px; line-height: 1.6;">
+                Bitte bestätigen Sie Ihre E-Mail-Adresse, um Ihr Konto zu aktivieren und Zugriff auf alle Funktionen zu erhalten.
+              </p>
+              
+              <!-- CTA Button -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td align="center" style="padding: 0 0 30px 0;">
+                    <a href="{{ .ConfirmationURL }}" 
+                       style="display: inline-block; padding: 16px 40px; background-color: #FBB928; color: #000001; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 50px; box-shadow: 0 4px 6px rgba(251, 185, 40, 0.3); transition: all 0.3s ease;"
+                       onmouseover="this.style.backgroundColor='#FFD700'" 
+                       onmouseout="this.style.backgroundColor='#FBB928'">
+                      E-Mail-Adresse bestätigen
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- Alternative Link -->
+              <div style="padding: 20px; background-color: #f9f9f9; border-radius: 6px; margin: 0 0 30px 0;">
+                <p style="margin: 0 0 10px 0; color: #999999; font-size: 14px;">
+                  Falls der Button nicht funktioniert, kopieren Sie bitte diesen Link in Ihren Browser:
+                </p>
+                <p style="margin: 0; word-break: break-all; color: #666666; font-size: 14px;">
+                  <a href="{{ .ConfirmationURL }}" style="color: #FBB928; text-decoration: underline;">
+                    {{ .ConfirmationURL }}
+                  </a>
+                </p>
+              </div>
+              
+              <!-- What's Next -->
+              <h3 style="margin: 0 0 15px 0; color: #333333; font-size: 18px; font-weight: 600;">
+                Was passiert als Nächstes?
+              </h3>
+              
+              <ul style="margin: 0 0 20px 0; padding-left: 20px; color: #666666; font-size: 15px; line-height: 1.8;">
+                <li>Nach der Bestätigung können Sie sich mit Ihren Zugangsdaten anmelden</li>
+                <li>Entdecken Sie hunderte spannende Erlebnisse in Ihrer Nähe</li>
+                <li>Kaufen Sie Gutscheine als perfekte Geschenke</li>
+                <li>Verwalten Sie Ihre Bestellungen bequem online</li>
+              </ul>
+              
+              <!-- Security Notice -->
+              <div style="padding: 15px; background-color: #FFF9E6; border-left: 4px solid #FBB928; margin: 20px 0;">
+                <p style="margin: 0; color: #666666; font-size: 14px;">
+                  <strong>Sicherheitshinweis:</strong> Falls Sie sich nicht bei EventHour registriert haben, können Sie diese E-Mail ignorieren. Ihr Account wird nicht erstellt, wenn Sie den Link nicht bestätigen.
+                </p>
+              </div>
+              
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 30px; background-color: #f9f9f9; border-radius: 0 0 8px 8px; text-align: center;">
+              
+              <p style="margin: 0 0 10px 0; color: #999999; font-size: 14px;">
+                Haben Sie Fragen? Wir helfen gerne!
+              </p>
+              
+              <p style="margin: 0 0 20px 0;">
+                <a href="mailto:support@eventhour.de" style="color: #FBB928; text-decoration: none; font-size: 14px; font-weight: 600;">
+                  support@eventhour.de
+                </a>
+              </p>
+              
+              <p style="margin: 0 0 10px 0; color: #999999; font-size: 12px;">
+                EventHour GmbH | Musterstraße 123 | 12345 Musterstadt
+              </p>
+              
+              <p style="margin: 0; color: #999999; font-size: 12px;">
+                © {{ .CurrentYear }} EventHour. Alle Rechte vorbehalten.
+              </p>
+              
+            </td>
+          </tr>
+          
+        </table>
+        
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

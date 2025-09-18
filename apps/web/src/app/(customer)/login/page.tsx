@@ -1,20 +1,31 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { AuthService } from '@eventhour/auth'
 import { Button, Card, Container, Section } from '@eventhour/ui'
-import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    // Check for success or error messages in URL
+    if (searchParams.get('confirmed') === 'true') {
+      setSuccessMessage('E-Mail erfolgreich bestätigt! Sie können sich jetzt anmelden.')
+    } else if (searchParams.get('error') === 'invalid_token') {
+      setError('Der Bestätigungslink ist ungültig oder abgelaufen.')
+    }
+  }, [searchParams])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,6 +49,10 @@ export default function LoginPage() {
       console.error('Login error:', err)
       if (err.message?.includes('Invalid login credentials')) {
         setError('E-Mail oder Passwort ist falsch')
+      } else if (err.message?.includes('Email not confirmed')) {
+        setError('Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse. Prüfen Sie Ihren Posteingang.')
+      } else if (err.message?.includes('Email link is invalid or has expired')) {
+        setError('Ihre E-Mail-Adresse wurde noch nicht bestätigt. Bitte prüfen Sie Ihren Posteingang.')
       } else {
         setError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.')
       }
@@ -57,6 +72,13 @@ export default function LoginPage() {
                 Willkommen zurück! Bitte melden Sie sich an.
               </p>
             </div>
+
+            {successMessage && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-green-700">{successMessage}</div>
+              </div>
+            )}
 
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">

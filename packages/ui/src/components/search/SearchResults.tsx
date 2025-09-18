@@ -6,6 +6,7 @@ import { clsx } from 'clsx'
 import { Card } from '../Card'
 import { Button } from '../Button'
 import { motion } from 'framer-motion'
+import { RatingDisplay } from '../rating/RatingDisplay'
 
 export interface SearchResult {
   id: string
@@ -17,6 +18,8 @@ export interface SearchResult {
   duration: string
   rating: number
   reviewCount: number
+  averageRating?: number
+  totalRatings?: number
   image?: string
   category: string
   isNew?: boolean
@@ -175,11 +178,13 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                       <Clock className="h-4 w-4 text-gray-400" />
                       <span className="text-gray-600">{result.duration}</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-eventhour-yellow text-eventhour-yellow" />
-                      <span className="font-medium">{result.rating}</span>
-                      <span className="text-gray-500">({result.reviewCount})</span>
-                    </div>
+                    {(result.averageRating !== undefined || result.rating) && (
+                      <RatingDisplay
+                        rating={result.averageRating || result.rating}
+                        totalRatings={result.totalRatings || result.reviewCount}
+                        size="sm"
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -276,11 +281,13 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-eventhour-yellow text-eventhour-yellow" />
-                    <span className="font-medium text-sm">{result.rating}</span>
-                    <span className="text-sm text-gray-500">({result.reviewCount})</span>
-                  </div>
+                  {(result.averageRating !== undefined || result.rating) && (
+                    <RatingDisplay
+                      rating={result.averageRating || result.rating}
+                      totalRatings={result.totalRatings || result.reviewCount}
+                      size="sm"
+                    />
+                  )}
                 </div>
               </div>
             </div>

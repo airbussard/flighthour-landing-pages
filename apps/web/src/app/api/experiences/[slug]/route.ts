@@ -67,6 +67,8 @@ export async function GET(
       retailPrice: experience.retail_price,
       taxRate: experience.tax_rate,
       isActive: experience.is_active,
+      averageRating: experience.average_rating || 0,
+      totalRatings: experience.total_ratings || 0,
       category: experience.categories ? {
         id: experience.categories.id,
         name: experience.categories.name,

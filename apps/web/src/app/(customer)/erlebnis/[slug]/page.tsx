@@ -14,8 +14,10 @@ import {
   CheckCircle,
   Info
 } from 'lucide-react'
-import { Button, Container, Section, Card } from '@eventhour/ui'
+import { Button, Container, Section, Card, RatingDisplay, RatingForm, RatingList } from '@eventhour/ui'
 import ImageGallery from '@/components/ImageGallery'
+import { AuthService } from '@eventhour/auth'
+import type { ExperienceRating } from '@eventhour/database'
 
 interface ExperienceDetail {
   id: string
@@ -48,6 +50,8 @@ interface ExperienceDetail {
     filename: string
     altText: string
   }>
+  averageRating?: number
+  totalRatings?: number
 }
 
 export default function ExperienceDetailPage() {
@@ -56,6 +60,13 @@ export default function ExperienceDetailPage() {
   const [experience, setExperience] = useState<ExperienceDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [ratings, setRatings] = useState<ExperienceRating[]>([])
+  const [ratingSummary, setRatingSummary] = useState<any>(null)
+  const [userRating, setUserRating] = useState<any>(null)
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [ratingsPage, setRatingsPage] = useState(1)
+  const [hasMoreRatings, setHasMoreRatings] = useState(false)
+  const [loadingRatings, setLoadingRatings] = useState(false)
 
   useEffect(() => {
     if (!slug) return
@@ -82,6 +93,12 @@ export default function ExperienceDetailPage() {
 
         const data = await response.json()
         setExperience(data.experience)
+
+        // Fetch ratings
+        fetchRatings(slug)
+
+        // Check current user
+        checkCurrentUser()
       } catch (err) {
         console.error('Error fetching experience:', err)
         setError('Es ist ein Fehler aufgetreten.')
@@ -90,8 +107,115 @@ export default function ExperienceDetailPage() {
       }
     }
 
+    const fetchRatings = async (experienceSlug: string, page = 1) => {
+      try {
+        setLoadingRatings(true)
+        const response = await fetch(
+          `/api/experiences/${experienceSlug}/ratings?page=${page}&limit=10&sort=helpful`
+        )
+
+        if (response.ok) {
+          const data = await response.json()
+          if (page === 1) {
+            setRatings(data.ratings)
+          } else {
+            setRatings(prev => [...prev, ...data.ratings])
+          }
+          setRatingSummary(data.summary)
+          setUserRating(data.userRating)
+          setHasMoreRatings(data.pagination.page < data.pagination.totalPages)
+          setRatingsPage(page)
+        }
+      } catch (err) {
+        console.error('Error fetching ratings:', err)
+      } finally {
+        setLoadingRatings(false)
+      }
+    }
+
+    const checkCurrentUser = async () => {
+      try {
+        const user = await AuthService.getCurrentUser()
+        setCurrentUser(user)
+      } catch (err) {
+        // User not logged in
+      }
+    }
+
     fetchExperience()
   }, [slug])
+
+  const handleRatingSubmit = async (ratingData: any) => {
+    if (!currentUser) {
+      throw new Error('Bitte melden Sie sich an, um eine Bewertung abzugeben')
+    }
+
+    const response = await fetch(`/api/experiences/${slug}/ratings`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(ratingData),
+      credentials: 'include',
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || 'Fehler beim Speichern der Bewertung')
+    }
+
+    // Refresh ratings after submission
+    fetchRatings(slug, 1)
+  }
+
+  const handleHelpfulVote = async (ratingId: string, isHelpful: boolean) => {
+    if (!currentUser) {
+      throw new Error('Bitte melden Sie sich an')
+    }
+
+    const response = await fetch(
+      `/api/experiences/${slug}/ratings/${ratingId}/helpful`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isHelpful }),
+        credentials: 'include',
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error('Fehler beim Abstimmen')
+    }
+  }
+
+  const fetchRatings = async (experienceSlug: string, page = 1) => {
+    try {
+      setLoadingRatings(true)
+      const response = await fetch(
+        `/api/experiences/${experienceSlug}/ratings?page=${page}&limit=10&sort=helpful`,
+        { credentials: 'include' }
+      )
+
+      if (response.ok) {
+        const data = await response.json()
+        if (page === 1) {
+          setRatings(data.ratings)
+        } else {
+          setRatings(prev => [...prev, ...data.ratings])
+        }
+        setRatingSummary(data.summary)
+        setUserRating(data.userRating)
+        setHasMoreRatings(data.pagination.page < data.pagination.totalPages)
+        setRatingsPage(page)
+      }
+    } catch (err) {
+      console.error('Error fetching ratings:', err)
+    } finally {
+      setLoadingRatings(false)
+    }
+  }
 
   const formatPrice = (cents: number) => {
     return new Intl.NumberFormat('de-DE', {
@@ -288,18 +412,12 @@ export default function ExperienceDetailPage() {
                 </div>
 
                 {/* Rating */}
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-5 w-5 ${
-                          i < 4 ? 'fill-eventhour-yellow text-eventhour-yellow' : 'fill-gray-200 text-gray-200'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-600">4.5 (23 Bewertungen)</span>
+                <div className="mb-6">
+                  <RatingDisplay
+                    rating={ratingSummary?.averageRating || 0}
+                    totalRatings={ratingSummary?.totalRatings || 0}
+                    size="lg"
+                  />
                 </div>
 
                 {/* Booking Options */}
@@ -341,6 +459,60 @@ export default function ExperienceDetailPage() {
                 </Button>
               </Card>
             </div>
+          </div>
+        </Container>
+      </Section>
+
+      {/* Ratings Section */}
+      <Section className="py-12">
+        <Container>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold mb-6">Bewertungen</h2>
+
+            {/* Rating Form for logged-in users */}
+            {currentUser && !userRating && (
+              <div className="mb-8">
+                <RatingForm
+                  experienceId={experience.id}
+                  experienceName={experience.title}
+                  onSubmit={handleRatingSubmit}
+                  recaptchaSiteKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
+                />
+              </div>
+            )}
+
+            {/* User's existing rating */}
+            {userRating && (
+              <div className="mb-8">
+                <Card className="p-4 bg-eventhour-yellow/10 border-eventhour-yellow">
+                  <p className="text-sm font-medium mb-2">Ihre Bewertung</p>
+                  <RatingDisplay rating={userRating.rating} size="sm" showNumber={false} />
+                  {userRating.comment && (
+                    <p className="mt-2 text-sm text-gray-700">{userRating.comment}</p>
+                  )}
+                </Card>
+              </div>
+            )}
+
+            {/* Login prompt for non-authenticated users */}
+            {!currentUser && (
+              <Card className="p-6 mb-8 text-center">
+                <p className="mb-4">Melden Sie sich an, um eine Bewertung abzugeben</p>
+                <Link href="/login">
+                  <Button variant="primary">Anmelden</Button>
+                </Link>
+              </Card>
+            )}
+
+            {/* Ratings List */}
+            <RatingList
+              ratings={ratings}
+              currentUserId={currentUser?.id}
+              onHelpfulVote={handleHelpfulVote}
+              onLoadMore={() => fetchRatings(slug as string, ratingsPage + 1)}
+              hasMore={hasMoreRatings}
+              isLoading={loadingRatings}
+            />
           </div>
         </Container>
       </Section>

@@ -35,6 +35,11 @@ export { Footer } from './components/Footer'
 // Search Components
 export * from './components/search'
 
+// Rating Components
+export { RatingDisplay } from './components/rating/RatingDisplay'
+export { RatingForm } from './components/rating/RatingForm'
+export { RatingList } from './components/rating/RatingList'
+
 // Cart Components
 export { CartButton, CartDrawer } from './components/cart'
 

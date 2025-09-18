@@ -64,6 +64,8 @@ export class SearchService {
         .from('experiences')
         .select(`
           *,
+          average_rating,
+          total_ratings,
           partners!experiences_partner_id_fkey (*),
           categories!experiences_category_id_fkey (*),
           experience_images!left (

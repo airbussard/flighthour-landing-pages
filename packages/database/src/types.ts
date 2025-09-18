@@ -113,6 +113,8 @@ export interface Experience {
   purchase_price: number
   search_keywords: string | null
   popularity_score: number
+  average_rating: number
+  total_ratings: number
   is_active: boolean
   created_at: Date
   updated_at: Date
@@ -202,4 +204,39 @@ export interface AdditionalService {
   is_active: boolean
   created_at: Date
   updated_at: Date
+}
+
+export interface ExperienceRating {
+  id: string
+  experience_id: string
+  user_id: string
+  rating: number
+  title: string | null
+  comment: string | null
+  is_verified_purchase: boolean
+  helpful_count: number
+  not_helpful_count: number
+  created_at: Date
+  updated_at: Date
+  user?: User
+  experience?: Experience
+}
+
+export interface RatingHelpfulVote {
+  id: string
+  rating_id: string
+  user_id: string
+  is_helpful: boolean
+  created_at: Date
+}
+
+export interface ExperienceRatingSummary {
+  experience_id: string
+  total_ratings: number
+  average_rating: number
+  five_star_count: number
+  four_star_count: number
+  three_star_count: number
+  two_star_count: number
+  one_star_count: number
 }

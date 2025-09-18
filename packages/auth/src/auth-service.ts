@@ -15,7 +15,10 @@ export class AuthService {
     if (!supabase) throw new Error('Authentication service not available')
 
     try {
-      // Create Supabase auth user with metadata
+      // Get the site URL from environment or use a default
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://flighthourlandingp.immogear.de'
+      
+      // Create Supabase auth user with metadata and email redirect
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email,
         password,
@@ -23,7 +26,8 @@ export class AuthService {
           data: {
             name,
             role: 'CUSTOMER'
-          }
+          },
+          emailRedirectTo: `${siteUrl}/auth/confirm`
         }
       })
 
@@ -75,8 +79,14 @@ export class AuthService {
       // Note: rememberMe is handled by the browser's session storage
       // Supabase automatically persists sessions
 
-      if (error) throw error
-      if (!data.user) throw new Error('Sign in failed')
+      if (error) {
+        console.error('Sign in error:', error.message, error.status)
+        throw error
+      }
+      if (!data.user) {
+        console.error('Sign in failed: No user returned')
+        throw new Error('Sign in failed')
+      }
 
       // Try to get user from database, or use auth metadata
       const { data: dbUser } = await supabase

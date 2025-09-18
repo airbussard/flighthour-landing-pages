@@ -61,16 +61,6 @@ export default function RegisterPage() {
     try {
       await AuthService.signUp(formData.email, formData.password, formData.name)
       setSuccess(true)
-      
-      // Auto-login after registration
-      setTimeout(async () => {
-        try {
-          await AuthService.signIn(formData.email, formData.password)
-          router.push('/konto')
-        } catch {
-          router.push('/login')
-        }
-      }, 2000)
     } catch (err: any) {
       console.error('Registration error:', err)
       if (err.message?.includes('already registered')) {
@@ -78,7 +68,6 @@ export default function RegisterPage() {
       } else {
         setError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.')
       }
-    } finally {
       setLoading(false)
     }
   }
@@ -89,14 +78,39 @@ export default function RegisterPage() {
         <Container>
           <div className="max-w-md mx-auto">
             <Card className="p-8 text-center">
-              <div className="mb-4">
+              <div className="mb-6">
                 <CheckCircle className="h-16 w-16 text-green-500 mx-auto" />
               </div>
-              <h2 className="text-2xl font-bold mb-2">Registrierung erfolgreich!</h2>
-              <p className="text-gray-600 mb-4">
-                Willkommen bei EventHour! Sie werden automatisch angemeldet...
-              </p>
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-eventhour-yellow mx-auto"></div>
+              <h2 className="text-2xl font-bold mb-4">Registrierung erfolgreich!</h2>
+              <div className="space-y-4 mb-6">
+                <p className="text-gray-700">
+                  Vielen Dank für Ihre Registrierung bei EventHour!
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+                  <p className="text-sm text-blue-800 font-medium mb-2">
+                    ✉️ Bestätigungs-E-Mail versendet
+                  </p>
+                  <p className="text-sm text-blue-700">
+                    Wir haben Ihnen eine E-Mail an <strong>{formData.email}</strong> gesendet.
+                    Bitte klicken Sie auf den Bestätigungslink in der E-Mail, um Ihr Konto zu aktivieren.
+                  </p>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Nach der Bestätigung können Sie sich mit Ihren Zugangsdaten anmelden.
+                </p>
+              </div>
+              <div className="space-y-3">
+                <Button
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => router.push('/login')}
+                >
+                  Zum Login
+                </Button>
+                <p className="text-xs text-gray-500">
+                  Keine E-Mail erhalten? Prüfen Sie Ihren Spam-Ordner oder kontaktieren Sie unseren Support.
+                </p>
+              </div>
             </Card>
           </div>
         </Container>

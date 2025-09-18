@@ -325,8 +325,10 @@ function SearchPageContent() {
                   price: exp.retailPrice ? exp.retailPrice / 100 : 0, // Convert from cents to euros
                   location: exp.city || 'Deutschland',
                   duration: exp.duration ? `${exp.duration} Min.` : '',
-                  rating: exp.popularityScore ? exp.popularityScore / 20 : 0, // Convert popularity to rating scale
-                  reviewCount: 0, // No review count in schema
+                  rating: exp.averageRating || (exp.popularityScore ? exp.popularityScore / 20 : 0), // Use actual rating or convert popularity
+                  reviewCount: exp.totalRatings || 0,
+                  averageRating: exp.averageRating || 0,
+                  totalRatings: exp.totalRatings || 0,
                   image: exp.experience_images?.[0]?.filename || exp.experienceImages?.[0]?.filename,
                   category: exp.category?.name || '',
                   isNew: false, // No isNew field in schema
