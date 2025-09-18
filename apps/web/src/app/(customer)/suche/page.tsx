@@ -20,6 +20,8 @@ function SearchPageContent() {
   const minPrice = searchParams.get('minPrice')
   const maxPrice = searchParams.get('maxPrice')
   const sortBy = searchParams.get('sortBy') || 'relevance'
+  const location = searchParams.get('location') || ''
+  const radius = searchParams.get('radius') ? Number(searchParams.get('radius')) : 50
 
   const [filters, setFilters] = useState({
     categories: category,
@@ -37,6 +39,8 @@ function SearchPageContent() {
       filters.categories.forEach((c) => params.append('category', c))
       if (minPrice) params.append('minPrice', minPrice)
       if (filters.priceRange < 1000) params.append('maxPrice', String(filters.priceRange))
+      if (location) params.append('location', location)
+      if (radius > 0) params.append('radius', String(radius))
       params.append('sortBy', sortBy)
 
       const response = await fetch(`/api/search?${params}&t=${Date.now()}`, {
@@ -55,7 +59,7 @@ function SearchPageContent() {
     } finally {
       setLoading(false)
     }
-  }, [query, filters, sortBy, minPrice])
+  }, [query, filters, sortBy, minPrice, location, radius])
 
   // Fetch suggestions
   const fetchSuggestions = useCallback(async (searchQuery: string) => {
@@ -83,12 +87,22 @@ function SearchPageContent() {
     fetchResults()
   }, [fetchResults])
 
-  const handleSearch = (newQuery: string) => {
+  const handleSearch = (newQuery: string, newLocation?: string, newRadius?: number) => {
     const params = new URLSearchParams(searchParams.toString())
     if (newQuery) {
       params.set('q', newQuery)
     } else {
       params.delete('q')
+    }
+    if (newLocation) {
+      params.set('location', newLocation)
+    } else {
+      params.delete('location')
+    }
+    if (newRadius && newRadius > 0) {
+      params.set('radius', String(newRadius))
+    } else {
+      params.delete('radius')
     }
     router.push(`/suche?${params}`)
   }
@@ -200,13 +214,21 @@ function SearchPageContent() {
             <SearchBar
               value={query}
               onChange={fetchSuggestions}
-              onSubmit={(value) => {
+              onSubmit={(value, loc, rad) => {
                 saveRecentSearch(value)
-                handleSearch(value)
+                handleSearch(value, loc, rad)
+              }}
+              onLocationChange={(loc) => {
+                // Optional: You can debounce this if needed
+              }}
+              onRadiusChange={(rad) => {
+                // Optional: You can debounce this if needed
               }}
               suggestions={suggestions}
               recentSearches={getRecentSearches()}
               showLocation
+              locationValue={location}
+              radiusValue={radius}
               autoFocus
             />
           </div>
@@ -308,9 +330,13 @@ function SearchPageContent() {
                   image: exp.experience_images?.[0]?.filename || exp.experienceImages?.[0]?.filename,
                   category: exp.category?.name || '',
                   isNew: false, // No isNew field in schema
+                  distance: exp.distance,
+                  withinRadius: exp.withinRadius,
                 }))}
                 loading={loading}
                 view={view}
+                showDistanceGrouping={!!location && location.trim().length > 0}
+                searchRadius={radius}
                 onResultClick={(result: any) => router.push(`/erlebnis/${result.slug || result.id}`)}
               />
 

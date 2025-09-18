@@ -8,11 +8,15 @@ import { clsx } from 'clsx'
 export interface SearchBarProps {
   value?: string
   onChange?: (value: string) => void
-  onSubmit?: (value: string) => void
+  onSubmit?: (value: string, location?: string, radius?: number) => void
+  onLocationChange?: (location: string) => void
+  onRadiusChange?: (radius: number) => void
   suggestions?: string[]
   recentSearches?: string[]
   placeholder?: string
   showLocation?: boolean
+  locationValue?: string
+  radiusValue?: number
   className?: string
   autoFocus?: boolean
 }
@@ -21,10 +25,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   value = '',
   onChange,
   onSubmit,
+  onLocationChange,
+  onRadiusChange,
   suggestions = [],
   recentSearches = [],
   placeholder = 'Suche nach Erlebnissen...',
   showLocation = false,
+  locationValue = '',
+  radiusValue = 50,
   className,
   autoFocus = false,
 }) => {
@@ -32,7 +40,16 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [isFocused, setIsFocused] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const inputRef = useRef<HTMLInputElement>(null)
-  const [location, setLocation] = useState<string>('')
+  const [location, setLocation] = useState<string>(locationValue)
+  const [radius, setRadius] = useState<number>(radiusValue)
+
+  useEffect(() => {
+    setLocation(locationValue)
+  }, [locationValue])
+
+  useEffect(() => {
+    setRadius(radiusValue)
+  }, [radiusValue])
 
   useEffect(() => {
     setInputValue(value)
@@ -47,14 +64,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit?.(inputValue)
+    onSubmit?.(inputValue, location, radius)
     setIsFocused(false)
   }
 
   const handleSuggestionClick = (suggestion: string) => {
     setInputValue(suggestion)
     onChange?.(suggestion)
-    onSubmit?.(suggestion)
+    onSubmit?.(suggestion, location, radius)
     setIsFocused(false)
   }
 
@@ -119,16 +136,38 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </div>
 
           {showLocation && (
-            <div className="flex items-center gap-2 px-4 py-4 border border-gray-300 rounded-xl">
-              <MapPin className="h-5 w-5 text-gray-400" />
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Ort oder PLZ"
-                className="w-32 focus:outline-none"
-              />
-            </div>
+            <>
+              <div className="flex items-center gap-2 px-4 py-4 border border-gray-300 rounded-xl">
+                <MapPin className="h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => {
+                    setLocation(e.target.value)
+                    onLocationChange?.(e.target.value)
+                  }}
+                  placeholder="Ort oder PLZ"
+                  className="w-32 focus:outline-none"
+                />
+              </div>
+
+              <select
+                value={radius}
+                onChange={(e) => {
+                  const newRadius = Number(e.target.value)
+                  setRadius(newRadius)
+                  onRadiusChange?.(newRadius)
+                }}
+                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-eventhour-yellow"
+              >
+                <option value="5">5 km</option>
+                <option value="10">10 km</option>
+                <option value="25">25 km</option>
+                <option value="50">50 km</option>
+                <option value="100">100 km</option>
+                <option value="0">Deutschlandweit</option>
+              </select>
+            </>
           )}
 
           <button

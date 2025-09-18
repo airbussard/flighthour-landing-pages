@@ -1,5 +1,6 @@
 import { getSupabaseClient } from './supabase'
 import type { Experience } from './types'
+import { GeocodingService } from './geocoding-service'
 
 export interface SearchParams {
   query?: string
@@ -16,8 +17,13 @@ export interface SearchParams {
   limit?: number
 }
 
+export interface ExperienceWithDistance extends Experience {
+  distance?: number // Distance in kilometers
+  withinRadius?: boolean
+}
+
 export interface SearchResult {
-  experiences: Experience[]
+  experiences: ExperienceWithDistance[]
   total: number
   page: number
   totalPages: number
@@ -25,6 +31,11 @@ export interface SearchResult {
     categories: Array<{ id: string; name: string; count: number }>
     priceRange: { min: number; max: number }
     durations: Array<{ value: string; label: string; count: number }>
+  }
+  searchLocation?: {
+    query: string
+    coordinates?: { lat: number; lng: number }
+    radius?: number
   }
 }
 
@@ -40,6 +51,7 @@ export class SearchService {
       maxPrice,
       duration = [],
       location,
+      radius,
       partnerId,
       sortBy = 'relevance',
       page = 1,
@@ -105,12 +117,8 @@ export class SearchService {
         }
       }
 
-      // Apply location filter
-      if (location) {
-        queryBuilder = queryBuilder.or(
-          `city.ilike.%${location}%,postal_code.ilike.%${location}%,location_name.ilike.%${location}%`
-        )
-      }
+      // Note: Location filtering is now handled post-query for distance calculation
+      // We fetch all results and filter/sort by distance after
 
       // Apply partner filter
       if (partnerId) {
@@ -149,11 +157,56 @@ export class SearchService {
       if (error) throw error
 
       // Transform data
-      const experiences = (data || []).map((exp: any) => ({
+      let experiences: ExperienceWithDistance[] = (data || []).map((exp: any) => ({
         ...exp,
         partner: exp.partners,
         category: exp.categories,
       }))
+
+      // Apply location-based filtering and distance calculation
+      let searchLocationResult = undefined
+      if (location && location.trim().length > 0) {
+        const geocodingResult = await GeocodingService.geocodeWithFallback(location, 'DE')
+
+        if (geocodingResult.coordinates) {
+          const userCoords = geocodingResult.coordinates
+          searchLocationResult = {
+            query: location,
+            coordinates: userCoords,
+            radius: radius || 50 // Default radius 50km
+          }
+
+          // Calculate distances for all experiences
+          experiences = experiences.map(exp => {
+            if (exp.latitude && exp.longitude) {
+              const distance = GeocodingService.calculateDistance(
+                userCoords,
+                { lat: exp.latitude, lng: exp.longitude }
+              )
+              return {
+                ...exp,
+                distance,
+                withinRadius: radius ? distance <= radius : true
+              }
+            }
+            return exp
+          })
+
+          // Sort by distance if location search is active
+          if (sortBy === 'relevance' || sortBy === 'distance') {
+            experiences.sort((a, b) => {
+              // First show experiences within radius
+              if (a.withinRadius && !b.withinRadius) return -1
+              if (!a.withinRadius && b.withinRadius) return 1
+
+              // Then sort by distance
+              const distA = a.distance ?? 999999
+              const distB = b.distance ?? 999999
+              return distA - distB
+            })
+          }
+        }
+      }
 
       // Get filter aggregations (simplified version)
       // In a production system, you might want to use separate aggregate queries
@@ -174,6 +227,7 @@ export class SearchService {
         page,
         totalPages: Math.ceil((count || 0) / limit),
         filters,
+        searchLocation: searchLocationResult,
       }
     } catch (error) {
       console.error('Search error:', error)
