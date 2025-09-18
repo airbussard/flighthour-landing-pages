@@ -12,7 +12,7 @@ export interface SearchParams {
   location?: string
   radius?: number
   partnerId?: string
-  sortBy?: 'relevance' | 'price_asc' | 'price_desc' | 'rating' | 'newest'
+  sortBy?: 'relevance' | 'price_asc' | 'price_desc' | 'rating' | 'newest' | 'distance'
   page?: number
   limit?: number
 }
