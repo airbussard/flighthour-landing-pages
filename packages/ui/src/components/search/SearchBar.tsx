@@ -104,7 +104,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <div className={clsx('relative', className)}>
       <form onSubmit={handleSubmit} className="relative">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col lg:flex-row gap-3">
+          {/* Search Input */}
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
@@ -136,9 +137,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </div>
 
           {showLocation && (
-            <>
-              <div className="flex items-center gap-2 px-4 py-4 border border-gray-300 rounded-xl">
-                <MapPin className="h-5 w-5 text-gray-400" />
+            <div className="flex flex-col sm:flex-row gap-3">
+              {/* Location Input */}
+              <div className="flex items-center gap-2 px-4 py-4 border border-gray-300 rounded-xl bg-white hover:border-gray-400 transition-colors">
+                <MapPin className="h-5 w-5 text-gray-400 flex-shrink-0" />
                 <input
                   type="text"
                   value={location}
@@ -147,10 +149,11 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                     onLocationChange?.(e.target.value)
                   }}
                   placeholder="Ort oder PLZ"
-                  className="w-32 focus:outline-none"
+                  className="w-full sm:w-32 focus:outline-none bg-transparent"
                 />
               </div>
 
+              {/* Radius Select */}
               <select
                 value={radius}
                 onChange={(e) => {
@@ -158,7 +161,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                   setRadius(newRadius)
                   onRadiusChange?.(newRadius)
                 }}
-                className="px-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-eventhour-yellow"
+                className="px-4 py-4 border border-gray-300 rounded-xl bg-white hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-eventhour-yellow transition-colors appearance-none cursor-pointer"
+                style={{
+                  backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'right 1rem center',
+                  backgroundSize: '1.5em 1.5em',
+                  paddingRight: '3rem'
+                }}
               >
                 <option value="5">5 km</option>
                 <option value="10">10 km</option>
@@ -167,16 +177,21 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 <option value="100">100 km</option>
                 <option value="0">Deutschlandweit</option>
               </select>
-            </>
+            </div>
           )}
 
+          {/* Search Button */}
           <button
             type="submit"
             className={clsx(
-              'px-6 py-4 rounded-xl',
+              'px-8 py-4 rounded-xl',
               'bg-eventhour-yellow text-eventhour-black',
-              'font-semibold',
-              'hover:bg-yellow-500 transition-colors'
+              'font-semibold text-lg',
+              'hover:bg-yellow-500 active:bg-yellow-600',
+              'transition-colors duration-200',
+              'shadow-sm hover:shadow-md',
+              'whitespace-nowrap',
+              'w-full sm:w-auto'
             )}
           >
             Suchen
