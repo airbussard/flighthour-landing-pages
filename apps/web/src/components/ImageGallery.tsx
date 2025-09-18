@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight, X, Expand } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { clsx } from 'clsx'
@@ -21,40 +21,19 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
 
-  // If no images, show placeholder
-  if (!images || images.length === 0) {
-    return (
-      <div className="aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
-        <p className="text-gray-500">Kein Bild verfügbar</p>
-      </div>
-    )
-  }
+  const hasImages = images && images.length > 0
+  const hasMultipleImages = images && images.length > 1
+  const currentImage = hasImages ? images[currentIndex] : null
 
-  // If only one image, show simple view
-  if (images.length === 1) {
-    return (
-      <div className="aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden">
-        <img
-          src={images[0].filename}
-          alt={images[0].altText || title}
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src = '/images/experiences/default.jpg'
-          }}
-        />
-      </div>
-    )
-  }
-
-  const currentImage = images[currentIndex]
-
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
+    if (!hasMultipleImages) return
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))
-  }
+  }, [hasMultipleImages, images?.length])
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
+    if (!hasMultipleImages) return
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))
-  }
+  }, [hasMultipleImages, images?.length])
 
   const goToImage = (index: number) => {
     setCurrentIndex(index)
@@ -76,19 +55,19 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
     const isLeftSwipe = distance > 50
     const isRightSwipe = distance < -50
 
-    if (isLeftSwipe && images.length > 1) {
+    if (isLeftSwipe && hasMultipleImages) {
       goToNext()
     }
-    if (isRightSwipe && images.length > 1) {
+    if (isRightSwipe && hasMultipleImages) {
       goToPrevious()
     }
   }
 
   // Keyboard navigation
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (images.length <= 1) return
+    if (!hasMultipleImages && !isFullscreen) return
 
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         goToPrevious()
       } else if (e.key === 'ArrowRight') {
@@ -100,7 +79,33 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [currentIndex, isFullscreen, images.length])
+  }, [goToPrevious, goToNext, isFullscreen, hasMultipleImages])
+
+  // If no images, show placeholder
+  if (!hasImages) {
+    return (
+      <div className="aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden flex items-center justify-center">
+        <p className="text-gray-500">Kein Bild verfügbar</p>
+      </div>
+    )
+  }
+
+  // If only one image, show simple view
+  if (!hasMultipleImages) {
+    return (
+      <div className="aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden">
+        <img
+          src={images[0].filename}
+          alt={images[0].altText || title}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement
+            target.src = '/images/experiences/default.jpg'
+          }}
+        />
+      </div>
+    )
+  }
 
   return (
     <>
@@ -116,15 +121,16 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
           <AnimatePresence mode="wait">
             <motion.img
               key={currentIndex}
-              src={currentImage.filename}
-              alt={currentImage.altText || title}
+              src={currentImage?.filename}
+              alt={currentImage?.altText || title}
               className="w-full h-full object-cover"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
               onError={(e) => {
-                e.currentTarget.src = '/images/experiences/default.jpg'
+                const target = e.target as HTMLImageElement
+                target.src = '/images/experiences/default.jpg'
               }}
             />
           </AnimatePresence>
@@ -162,11 +168,18 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
 
         {/* Thumbnail Strip */}
         <div className="relative">
-          <div className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar" style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            WebkitScrollbar: { display: 'none' }
-          }}>
+          <div
+            className="flex gap-2 overflow-x-auto pb-2 hide-scrollbar"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            <style jsx>{`
+              .hide-scrollbar::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
             {images.map((image, index) => (
               <button
                 key={index}
@@ -183,7 +196,8 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
                   alt={image.altText || `Thumbnail ${index + 1}`}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.currentTarget.src = '/images/experiences/default.jpg'
+                    const target = e.target as HTMLImageElement
+                    target.src = '/images/experiences/default.jpg'
                   }}
                 />
               </button>
@@ -194,7 +208,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
 
       {/* Fullscreen Modal */}
       <AnimatePresence>
-        {isFullscreen && (
+        {isFullscreen && currentImage && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -218,6 +232,10 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
                 alt={currentImage.altText || title}
                 className="max-w-full max-h-full object-contain"
                 onClick={(e) => e.stopPropagation()}
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement
+                  target.src = '/images/experiences/default.jpg'
+                }}
               />
 
               {/* Navigation in Fullscreen */}
@@ -269,6 +287,10 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, title }) => 
                       src={image.filename}
                       alt={image.altText || `Thumbnail ${index + 1}`}
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.src = '/images/experiences/default.jpg'
+                      }}
                     />
                   </button>
                 ))}
