@@ -15,6 +15,7 @@ import {
   Info
 } from 'lucide-react'
 import { Button, Container, Section, Card } from '@eventhour/ui'
+import ImageGallery from '@/components/ImageGallery'
 
 interface ExperienceDetail {
   id: string
@@ -180,23 +181,11 @@ export default function ExperienceDetailPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Left Column - Images and Description */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Main Image */}
-              <div className="aspect-[16/9] bg-gray-100 rounded-xl overflow-hidden">
-                {experience.images && experience.images[0] ? (
-                  <img
-                    src={experience.images[0].filename}
-                    alt={experience.images[0].altText || experience.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = '/images/experiences/default.jpg'
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                    <p className="text-gray-500">Kein Bild verfügbar</p>
-                  </div>
-                )}
-              </div>
+              {/* Image Gallery */}
+              <ImageGallery
+                images={experience.images || []}
+                title={experience.title}
+              />
 
               {/* Title and Location */}
               <div>
