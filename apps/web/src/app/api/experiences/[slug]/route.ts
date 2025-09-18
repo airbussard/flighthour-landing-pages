@@ -35,7 +35,8 @@ export async function GET(
         ),
         experience_images!left (
           filename,
-          alt_text
+          alt_text,
+          sort_order
         )
       `)
       .eq('slug', slug)
@@ -75,7 +76,10 @@ export async function GET(
         id: experience.partners.id,
         companyName: experience.partners.company_name
       } : null,
-      images: experience.experience_images || []
+      images: experience.experience_images ?
+        experience.experience_images.sort((a: any, b: any) =>
+          (a.sort_order || 0) - (b.sort_order || 0)
+        ) : []
     }
 
     return NextResponse.json({
