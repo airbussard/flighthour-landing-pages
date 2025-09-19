@@ -79,9 +79,12 @@ export async function GET(
         companyName: experience.partners.company_name
       } : null,
       images: experience.experience_images ?
-        experience.experience_images.sort((a: any, b: any) =>
-          (a.sort_order || 0) - (b.sort_order || 0)
-        ) : []
+        experience.experience_images
+          .sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0))
+          .map((img: any) => ({
+            filename: img.filename,
+            altText: img.alt_text || ''
+          })) : []
     }
 
     return NextResponse.json({
