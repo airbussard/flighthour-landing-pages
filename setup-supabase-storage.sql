@@ -18,7 +18,7 @@ FOR INSERT WITH CHECK (
   AND auth.uid() IS NOT NULL
   AND EXISTS (
     SELECT 1 FROM users
-    WHERE id = auth.uid()
+    WHERE id = auth.uid()::text
     AND role = 'ADMIN'
   )
 );
@@ -30,7 +30,7 @@ FOR DELETE USING (
   AND auth.uid() IS NOT NULL
   AND EXISTS (
     SELECT 1 FROM users
-    WHERE id = auth.uid()
+    WHERE id = auth.uid()::text
     AND role = 'ADMIN'
   )
 );
