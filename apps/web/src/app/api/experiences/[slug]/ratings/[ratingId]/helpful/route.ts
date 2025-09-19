@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@eventhour/database'
+import { createServerSupabaseClient } from '@eventhour/database/src/supabase-server'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,7 +9,7 @@ export async function POST(
   { params }: { params: { slug: string, ratingId: string } }
 ) {
   try {
-    const supabase = getSupabaseClient()
+    const supabase = createServerSupabaseClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection not available' }, { status: 503 })
     }
@@ -98,7 +98,7 @@ export async function DELETE(
   { params }: { params: { slug: string, ratingId: string } }
 ) {
   try {
-    const supabase = getSupabaseClient()
+    const supabase = createServerSupabaseClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection not available' }, { status: 503 })
     }
