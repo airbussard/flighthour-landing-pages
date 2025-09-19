@@ -47,10 +47,15 @@ export async function DELETE(
 
     // Extract file path from URL for Supabase Storage deletion
     const url = image.filename
+    console.log('Attempting to delete image from storage:', url)
+
+    // Der Pfad im Storage ist jetzt nur der Dateiname (ohne Unterordner)
+    // URL Format: https://xxx.supabase.co/storage/v1/object/public/experience-images/filename.ext
     const match = url.match(/\/experience-images\/(.+)$/)
 
     if (match) {
       const filePath = match[1]
+      console.log('Deleting from storage with path:', filePath)
 
       // Delete from Supabase Storage
       const { error: storageError } = await supabase.storage
@@ -58,9 +63,18 @@ export async function DELETE(
         .remove([filePath])
 
       if (storageError) {
-        console.error('Storage delete error:', storageError)
+        console.error('Storage delete error:', {
+          error: storageError,
+          message: storageError.message,
+          filePath,
+          bucket: 'experience-images'
+        })
         // Continue with database deletion even if storage fails
+      } else {
+        console.log('Successfully deleted from storage:', filePath)
       }
+    } else {
+      console.warn('Could not extract file path from URL:', url)
     }
 
     // Delete from database

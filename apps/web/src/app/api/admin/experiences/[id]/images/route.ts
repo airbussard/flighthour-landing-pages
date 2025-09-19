@@ -45,11 +45,20 @@ export async function POST(
     // Generate unique filename
     const fileExt = file.name.split('.').pop()
     const fileName = `${experienceId}_${nanoid()}.${fileExt}`
-    const filePath = `experiences/${fileName}`
+
+    // Kein Unterordner mehr - direkt im Bucket speichern
+    const filePath = fileName
 
     // Convert File to ArrayBuffer then to Uint8Array
     const arrayBuffer = await file.arrayBuffer()
     const fileData = new Uint8Array(arrayBuffer)
+
+    console.log('Uploading image to Supabase Storage:', {
+      bucket: 'experience-images',
+      filePath,
+      fileSize: fileData.length,
+      contentType: file.type
+    })
 
     // Upload to Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
@@ -60,9 +69,19 @@ export async function POST(
       })
 
     if (uploadError) {
-      console.error('Upload error:', uploadError)
-      return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 })
+      console.error('Supabase Storage upload error:', {
+        error: uploadError,
+        message: uploadError.message,
+        filePath,
+        bucket: 'experience-images'
+      })
+      return NextResponse.json({
+        error: 'Failed to upload image',
+        details: uploadError.message
+      }, { status: 500 })
     }
+
+    console.log('Upload successful:', uploadData)
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage
@@ -146,15 +165,21 @@ export async function DELETE(
       const filePaths = images.map(img => {
         const url = img.filename
         // Extract path from Supabase Storage URL
+        // Jetzt ohne Unterordner - nur der Dateiname
         const match = url.match(/\/experience-images\/(.+)$/)
-        return match ? `experiences/${match[1]}` : null
+        return match ? match[1] : null
       }).filter(Boolean)
 
       if (filePaths.length > 0) {
+        console.log('Deleting multiple files from storage:', filePaths)
         // Delete from storage
-        await supabase.storage
+        const { error } = await supabase.storage
           .from('experience-images')
           .remove(filePaths as string[])
+
+        if (error) {
+          console.error('Error deleting files from storage:', error)
+        }
       }
     }
 
