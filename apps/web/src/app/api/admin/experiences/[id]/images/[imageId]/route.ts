@@ -1,36 +1,66 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@eventhour/database'
-import { promises as fs } from 'fs'
-import path from 'path'
+import { createServerSupabaseClient } from '@eventhour/database/src/supabase-server'
 
 export const dynamic = 'force-dynamic'
-
-// Use same base directory logic as main upload route
-const isProduction = process.env.NODE_ENV === 'production'
-const baseDir = isProduction ? process.cwd() : path.join(process.cwd(), 'apps', 'web')
 
 export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string; imageId: string } }
 ) {
   try {
-    const supabase = getSupabaseClient()
+    const supabase = createServerSupabaseClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection not available' }, { status: 503 })
+    }
+
+    // Check authentication and admin role
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check if user is admin
+    const { data: userData } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', session.user.id)
+      .single()
+
+    if (!userData || userData.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { id: experienceId, imageId } = params
 
     // Get image details first
-    const { data: image } = await supabase
+    const { data: image, error: fetchError } = await supabase
       .from('experience_images')
       .select('filename')
       .eq('id', imageId)
       .eq('experience_id', experienceId)
       .single()
 
-    if (!image) {
+    if (fetchError || !image) {
       return NextResponse.json({ error: 'Image not found' }, { status: 404 })
+    }
+
+    // Extract file path from URL for Supabase Storage deletion
+    const url = image.filename
+    const match = url.match(/\/experience-images\/(.+)$/)
+
+    if (match) {
+      const filePath = match[1]
+
+      // Delete from Supabase Storage
+      const { error: storageError } = await supabase.storage
+        .from('experience-images')
+        .remove([filePath])
+
+      if (storageError) {
+        console.error('Storage delete error:', storageError)
+        // Continue with database deletion even if storage fails
+      }
     }
 
     // Delete from database
@@ -43,21 +73,6 @@ export async function DELETE(
     if (deleteError) {
       console.error('Database delete error:', deleteError)
       return NextResponse.json({ error: 'Failed to delete image' }, { status: 500 })
-    }
-
-    // Delete file from server
-    if (image.filename) {
-      // Extract the actual filename from the API path
-      let actualPath = image.filename
-      if (actualPath.startsWith('/api/images/')) {
-        actualPath = actualPath.replace('/api/images/', '/')
-      }
-      if (actualPath.startsWith('/uploads/')) {
-        const filepath = path.join(baseDir, 'public', actualPath)
-        await fs.unlink(filepath).catch((err) => {
-          console.warn('Failed to delete file:', filepath, err.message)
-        })
-      }
     }
 
     return NextResponse.json({ success: true })

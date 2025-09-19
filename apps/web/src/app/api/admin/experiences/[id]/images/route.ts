@@ -1,109 +1,104 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSupabaseClient } from '@eventhour/database'
-import { promises as fs } from 'fs'
-import path from 'path'
-import { randomUUID } from 'crypto'
+import { createServerSupabaseClient } from '@eventhour/database/src/supabase-server'
+import { nanoid } from 'nanoid'
 
 export const dynamic = 'force-dynamic'
-
-// Create uploads directory if it doesn't exist
-// In production (Docker), process.cwd() is /app/apps/web
-// In development, it's the project root
-const isProduction = process.env.NODE_ENV === 'production'
-const baseDir = isProduction ? process.cwd() : path.join(process.cwd(), 'apps', 'web')
-const uploadsDir = path.join(baseDir, 'public', 'uploads', 'experiences')
-
-async function ensureUploadsDir() {
-  try {
-    await fs.access(uploadsDir)
-  } catch {
-    await fs.mkdir(uploadsDir, { recursive: true })
-  }
-}
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = getSupabaseClient()
+    const supabase = createServerSupabaseClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection not available' }, { status: 503 })
     }
 
-    const experienceId = params.id
+    // Check authentication and admin role
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check if user is admin
+    const { data: userData } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', session.user.id)
+      .single()
+
+    if (!userData || userData.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const { id: experienceId } = params
     const formData = await request.formData()
     const file = formData.get('file') as File
+    const altText = formData.get('altText') as string || ''
+    const sortOrder = parseInt(formData.get('sortOrder') as string || '0')
 
     if (!file) {
-      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'Invalid file type. Only images are allowed.' }, { status: 400 })
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File too large. Max size is 5MB.' }, { status: 400 })
-    }
-
-    // Ensure uploads directory exists
-    await ensureUploadsDir()
 
     // Generate unique filename
-    const extension = file.name.split('.').pop() || 'jpg'
-    const filename = `${experienceId}_${randomUUID()}.${extension}`
-    const filepath = path.join(uploadsDir, filename)
-    // Use the API route for serving images
-    const publicPath = `/api/images/uploads/experiences/${filename}`
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${experienceId}_${nanoid()}.${fileExt}`
+    const filePath = `experiences/${fileName}`
 
-    // Convert File to Buffer and save
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await fs.writeFile(filepath, buffer)
-    
-    console.log('Image saved to:', filepath)
-    console.log('Public path:', publicPath)
+    // Convert File to ArrayBuffer then to Uint8Array
+    const arrayBuffer = await file.arrayBuffer()
+    const fileData = new Uint8Array(arrayBuffer)
 
-    // Get current max sort order
-    const { data: existingImages } = await supabase
-      .from('experience_images')
-      .select('sort_order')
-      .eq('experience_id', experienceId)
-      .order('sort_order', { ascending: false })
-      .limit(1)
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('experience-images')
+      .upload(filePath, fileData, {
+        contentType: file.type,
+        upsert: false
+      })
 
-    const nextOrder = existingImages && existingImages.length > 0 
-      ? (existingImages[0].sort_order || 0) + 1 
-      : 0
+    if (uploadError) {
+      console.error('Upload error:', uploadError)
+      return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 })
+    }
 
-    // Save image reference to database
-    const { data: image, error } = await supabase
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('experience-images')
+      .getPublicUrl(filePath)
+
+    // Save image reference in database
+    const { data: imageData, error: dbError } = await supabase
       .from('experience_images')
       .insert({
         experience_id: experienceId,
-        filename: publicPath,
-        alt_text: file.name.replace(/\.[^/.]+$/, ''),
-        sort_order: nextOrder
+        filename: publicUrl,
+        alt_text: altText || file.name,
+        sort_order: sortOrder
       })
       .select()
       .single()
 
-    if (error) {
-      // Delete uploaded file if database insert fails
-      await fs.unlink(filepath).catch(() => {})
-      console.error('Database error:', error)
+    if (dbError) {
+      // If database insert fails, delete the uploaded file
+      await supabase.storage
+        .from('experience-images')
+        .remove([filePath])
+
+      console.error('Database error:', dbError)
       return NextResponse.json({ error: 'Failed to save image reference' }, { status: 500 })
     }
 
     return NextResponse.json({
-      id: image.id,
-      filename: publicPath,
-      altText: image.alt_text,
-      sortOrder: image.sort_order
+      id: imageData.id,
+      filename: publicUrl,
+      altText: imageData.alt_text,
+      sortOrder: imageData.sort_order,
+      message: 'Image uploaded successfully'
     })
+
   } catch (error) {
     console.error('Image upload error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
@@ -115,59 +110,67 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = getSupabaseClient()
+    const supabase = createServerSupabaseClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection not available' }, { status: 503 })
     }
 
-    const experienceId = params.id
-    const url = new URL(request.url)
-    const imageId = url.pathname.split('/').pop()
+    // Check authentication and admin role
+    const { data: { session } } = await supabase.auth.getSession()
 
-    if (!imageId) {
-      return NextResponse.json({ error: 'Image ID required' }, { status: 400 })
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Get image details first
-    const { data: image } = await supabase
-      .from('experience_images')
-      .select('filename')
-      .eq('id', imageId)
-      .eq('experience_id', experienceId)
+    // Check if user is admin
+    const { data: userData } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', session.user.id)
       .single()
 
-    if (!image) {
-      return NextResponse.json({ error: 'Image not found' }, { status: 404 })
+    if (!userData || userData.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
+    const { id: experienceId } = params
+
+    // Delete all images for this experience from storage
+    const { data: images } = await supabase
+      .from('experience_images')
+      .select('filename')
+      .eq('experience_id', experienceId)
+
+    if (images && images.length > 0) {
+      // Extract file paths from URLs
+      const filePaths = images.map(img => {
+        const url = img.filename
+        // Extract path from Supabase Storage URL
+        const match = url.match(/\/experience-images\/(.+)$/)
+        return match ? `experiences/${match[1]}` : null
+      }).filter(Boolean)
+
+      if (filePaths.length > 0) {
+        // Delete from storage
+        await supabase.storage
+          .from('experience-images')
+          .remove(filePaths as string[])
+      }
     }
 
     // Delete from database
     const { error: deleteError } = await supabase
       .from('experience_images')
       .delete()
-      .eq('id', imageId)
       .eq('experience_id', experienceId)
 
     if (deleteError) {
-      console.error('Database delete error:', deleteError)
-      return NextResponse.json({ error: 'Failed to delete image' }, { status: 500 })
+      console.error('Delete error:', deleteError)
+      return NextResponse.json({ error: 'Failed to delete images' }, { status: 500 })
     }
 
-    // Delete file from server
-    if (image.filename) {
-      // Extract the actual filename from the API path
-      let actualPath = image.filename
-      if (actualPath.startsWith('/api/images/')) {
-        actualPath = actualPath.replace('/api/images/', '/')
-      }
-      if (actualPath.startsWith('/uploads/')) {
-        const filepath = path.join(baseDir, 'public', actualPath)
-        await fs.unlink(filepath).catch((err) => {
-          console.warn('Failed to delete file:', filepath, err.message)
-        })
-      }
-    }
+    return NextResponse.json({ message: 'Images deleted successfully' })
 
-    return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Image delete error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
