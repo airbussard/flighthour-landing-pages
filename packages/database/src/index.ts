@@ -7,8 +7,9 @@ export { GeocodingService } from './geocoding-service'
 
 // Export Supabase client
 export { getSupabaseClient } from './supabase'
-// Server-only export - should only be imported in API routes
+// Server-only exports - should only be imported in API routes
 // export { createServerSupabaseClient } from './supabase-server'
+// export { createServiceSupabaseClient } from './supabase-service'
 
 // Export types
 export * from './types'

@@ -48,40 +48,45 @@ export async function DELETE(
 
     // Extract file path from URL for Supabase Storage deletion
     const url = image.filename
-    console.log('Attempting to delete image from storage:', url)
+    console.log('Attempting to delete image:', url)
 
-    // Der Pfad im Storage ist jetzt nur der Dateiname (ohne Unterordner)
-    // URL Format: https://xxx.supabase.co/storage/v1/object/public/experience-images/filename.ext
-    const match = url.match(/\/experience-images\/(.+)$/)
+    // Check if this is an old local image or a Supabase Storage image
+    if (url.includes('/api/images/')) {
+      // Old local image - skip storage deletion
+      console.log('Old local image detected, skipping storage deletion:', url)
+    } else if (url.includes('/experience-images/')) {
+      // Supabase Storage image - try to delete from storage
+      const match = url.match(/\/experience-images\/(.+)$/)
 
-    if (match) {
-      const filePath = match[1]
-      console.log('Deleting from storage with path:', filePath)
+      if (match) {
+        const filePath = match[1]
+        console.log('Deleting from Supabase Storage with path:', filePath)
 
-      // Verwende Service Client für Storage-Löschung
-      const serviceClient = createServiceSupabaseClient()
-      if (!serviceClient) {
-        console.error('Failed to create service client for storage deletion')
-      } else {
-        // Delete from Supabase Storage mit Service Client
-        const { error: storageError } = await serviceClient.storage
-          .from('experience-images')
-          .remove([filePath])
-
-        if (storageError) {
-          console.error('Storage delete error:', {
-            error: storageError,
-            message: storageError.message,
-            filePath,
-            bucket: 'experience-images'
-          })
-          // Continue with database deletion even if storage fails
+        // Verwende Service Client für Storage-Löschung
+        const serviceClient = createServiceSupabaseClient()
+        if (!serviceClient) {
+          console.error('Failed to create service client for storage deletion')
         } else {
-          console.log('Successfully deleted from storage:', filePath)
+          // Delete from Supabase Storage mit Service Client
+          const { error: storageError } = await serviceClient.storage
+            .from('experience-images')
+            .remove([filePath])
+
+          if (storageError) {
+            console.error('Storage delete error:', {
+              error: storageError,
+              message: storageError.message,
+              filePath,
+              bucket: 'experience-images'
+            })
+            // Continue with database deletion even if storage fails
+          } else {
+            console.log('Successfully deleted from storage:', filePath)
+          }
         }
       }
     } else {
-      console.warn('Could not extract file path from URL:', url)
+      console.warn('Unknown image URL format:', url)
     }
 
     // Delete from database
