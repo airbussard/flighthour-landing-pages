@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@eventhour/database/src/supabase-server'
+import { createServiceSupabaseClient } from '@eventhour/database/src/supabase-service'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,21 +58,27 @@ export async function DELETE(
       const filePath = match[1]
       console.log('Deleting from storage with path:', filePath)
 
-      // Delete from Supabase Storage
-      const { error: storageError } = await supabase.storage
-        .from('experience-images')
-        .remove([filePath])
-
-      if (storageError) {
-        console.error('Storage delete error:', {
-          error: storageError,
-          message: storageError.message,
-          filePath,
-          bucket: 'experience-images'
-        })
-        // Continue with database deletion even if storage fails
+      // Verwende Service Client für Storage-Löschung
+      const serviceClient = createServiceSupabaseClient()
+      if (!serviceClient) {
+        console.error('Failed to create service client for storage deletion')
       } else {
-        console.log('Successfully deleted from storage:', filePath)
+        // Delete from Supabase Storage mit Service Client
+        const { error: storageError } = await serviceClient.storage
+          .from('experience-images')
+          .remove([filePath])
+
+        if (storageError) {
+          console.error('Storage delete error:', {
+            error: storageError,
+            message: storageError.message,
+            filePath,
+            bucket: 'experience-images'
+          })
+          // Continue with database deletion even if storage fails
+        } else {
+          console.log('Successfully deleted from storage:', filePath)
+        }
       }
     } else {
       console.warn('Could not extract file path from URL:', url)

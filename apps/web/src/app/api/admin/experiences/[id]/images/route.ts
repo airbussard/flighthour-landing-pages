@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@eventhour/database/src/supabase-server'
+import { createServiceSupabaseClient } from '@eventhour/database/src/supabase-service'
 import { nanoid } from 'nanoid'
 
 export const dynamic = 'force-dynamic'
@@ -60,8 +61,20 @@ export async function POST(
       contentType: file.type
     })
 
-    // Upload to Supabase Storage
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    // Verwende Service Role Client für Storage-Upload (umgeht RLS)
+    const serviceClient = createServiceSupabaseClient()
+    if (!serviceClient) {
+      console.error('Failed to create service client for storage')
+      return NextResponse.json({
+        error: 'Storage service unavailable',
+        details: 'Could not initialize storage service client'
+      }, { status: 503 })
+    }
+
+    console.log('Using service role client for storage upload')
+
+    // Upload to Supabase Storage mit Service Client
+    const { data: uploadData, error: uploadError } = await serviceClient.storage
       .from('experience-images')
       .upload(filePath, fileData, {
         contentType: file.type,
@@ -83,10 +96,12 @@ export async function POST(
 
     console.log('Upload successful:', uploadData)
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
+    // Get public URL mit Service Client
+    const { data: { publicUrl } } = serviceClient.storage
       .from('experience-images')
       .getPublicUrl(filePath)
+
+    console.log('Public URL generated:', publicUrl)
 
     // Save image reference in database
     const { data: imageData, error: dbError } = await supabase
