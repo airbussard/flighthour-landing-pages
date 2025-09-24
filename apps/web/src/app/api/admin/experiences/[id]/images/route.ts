@@ -20,22 +20,59 @@ export async function POST(
     console.log('[IMAGE UPLOAD v3] Supabase client created')
 
     // Check authentication and admin role
-    const { data: { session } } = await supabase.auth.getSession()
+    console.log('[IMAGE UPLOAD v3] Getting session...')
+    let session
+    try {
+      const sessionResult = await supabase.auth.getSession()
+      session = sessionResult.data.session
+      console.log('[IMAGE UPLOAD v3] Session result:', {
+        hasSession: !!session,
+        userId: session?.user?.id,
+        userEmail: session?.user?.email
+      })
+    } catch (authError) {
+      console.error('[IMAGE UPLOAD v3] Auth error:', authError)
+      return NextResponse.json({
+        error: 'Authentication failed',
+        details: authError instanceof Error ? authError.message : 'Unknown auth error'
+      }, { status: 500 })
+    }
 
     if (!session?.user) {
+      console.log('[IMAGE UPLOAD v3] No user in session - returning 401')
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     // Check if user is admin
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', session.user.id)
-      .single()
+    console.log('[IMAGE UPLOAD v3] Checking admin role for user:', session.user.id)
+    let userData
+    try {
+      const result = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
+
+      userData = result.data
+      console.log('[IMAGE UPLOAD v3] User role check:', {
+        hasData: !!userData,
+        role: userData?.role,
+        error: result.error
+      })
+    } catch (dbError) {
+      console.error('[IMAGE UPLOAD v3] Database error checking role:', dbError)
+      return NextResponse.json({
+        error: 'Database error',
+        details: 'Failed to check user role'
+      }, { status: 500 })
+    }
 
     if (!userData || userData.role !== 'ADMIN') {
+      console.log('[IMAGE UPLOAD v3] User is not admin - returning 403')
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
+
+    console.log('[IMAGE UPLOAD v3] Auth check passed, user is admin')
 
     const { id: experienceId } = params
     console.log('[IMAGE UPLOAD v3] Getting form data...')
