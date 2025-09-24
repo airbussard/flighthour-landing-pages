@@ -9,11 +9,15 @@ export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  console.log('[IMAGE UPLOAD v3] POST request received for experience:', params.id)
+
   try {
     const supabase = createServerSupabaseClient()
     if (!supabase) {
+      console.error('[IMAGE UPLOAD v3] Failed to create supabase client')
       return NextResponse.json({ error: 'Database connection not available' }, { status: 503 })
     }
+    console.log('[IMAGE UPLOAD v3] Supabase client created')
 
     // Check authentication and admin role
     const { data: { session } } = await supabase.auth.getSession()
@@ -34,12 +38,23 @@ export async function POST(
     }
 
     const { id: experienceId } = params
+    console.log('[IMAGE UPLOAD v3] Getting form data...')
     const formData = await request.formData()
     const file = formData.get('file') as File
     const altText = formData.get('altText') as string || ''
     const sortOrder = parseInt(formData.get('sortOrder') as string || '0')
 
+    console.log('[IMAGE UPLOAD v3] Form data received:', {
+      hasFile: !!file,
+      fileName: file?.name,
+      fileSize: file?.size,
+      fileType: file?.type,
+      altText,
+      sortOrder
+    })
+
     if (!file) {
+      console.error('[IMAGE UPLOAD v3] No file in form data')
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
@@ -62,16 +77,22 @@ export async function POST(
     })
 
     // Verwende Service Role Client für Storage-Upload (umgeht RLS)
+    console.log('[IMAGE UPLOAD v3] Creating service client...')
+    console.log('[IMAGE UPLOAD v3] Env check:', {
+      hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+      hasServiceRoleKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY
+    })
+
     const serviceClient = createServiceSupabaseClient()
     if (!serviceClient) {
-      console.error('Failed to create service client for storage')
+      console.error('[IMAGE UPLOAD v3] Failed to create service client for storage')
       return NextResponse.json({
         error: 'Storage service unavailable',
-        details: 'Could not initialize storage service client'
+        details: 'Could not initialize storage service client - check SUPABASE_SERVICE_ROLE_KEY env var'
       }, { status: 503 })
     }
 
-    console.log('Using service role client for storage upload')
+    console.log('[IMAGE UPLOAD v3] Service role client created successfully')
 
     // Upload to Supabase Storage mit Service Client
     const { data: uploadData, error: uploadError } = await serviceClient.storage
@@ -134,8 +155,11 @@ export async function POST(
     })
 
   } catch (error) {
-    console.error('Image upload error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('[IMAGE UPLOAD v3] Unhandled error:', error)
+    return NextResponse.json({
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }
 
