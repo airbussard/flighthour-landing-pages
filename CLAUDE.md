@@ -117,23 +117,69 @@ NEXT_PUBLIC_SITE_URL="https://flighthourlandingp.immogear.de"
 ## 🐛 Bekannte Issues & Lösungen
 
 ### 1. E-Mail-Bestätigung
-**Problem:** "Email not confirmed" Fehler beim Login  
-**Lösung:** 
+**Problem:** "Email not confirmed" Fehler beim Login
+**Lösung:**
 - Implementierte `/auth/confirm` Route für Hash-Token-Verarbeitung
 - `emailRedirectTo` in signUp hinzugefügt
 - Client-seitige Token-Verarbeitung
 
 ### 2. Footer Logo Sichtbarkeit
-**Problem:** Dunkles "HOUR" auf dunklem Footer  
+**Problem:** Dunkles "HOUR" auf dunklem Footer
 **Lösung:** Logo-Komponente mit `variant="light"` Option erweitert
 
 ### 3. Bilder in Suchansicht
-**Problem:** Bilder wurden nicht angezeigt  
+**Problem:** Bilder wurden nicht angezeigt
 **Lösung:** `experience_images` Relation in SearchService hinzugefügt
+
+## 🔴 KRITISCHE SICHERHEITSLÜCKE - MUSS BEHOBEN WERDEN
+
+### Image-Upload ohne Auth-Check (Version v4)
+**Stand:** 24. September 2025
+**Betroffene Datei:** `/apps/web/src/app/api/admin/experiences/[id]/images/route.ts`
+**Schweregrad:** KRITISCH ⚠️
+
+#### Problem:
+- Auth-Check wurde temporär deaktiviert um Cookie-Problem zu umgehen
+- JEDER kann ohne Login Bilder hochladen
+- Keine Überprüfung ob User Admin ist
+- Service Client mit vollen Rechten wird ohne Authentifizierung verwendet
+
+#### Sicherheitsrisiken:
+1. **Unbefugter Zugriff:** Jeder kann Bilder zu beliebigen Experiences hochladen
+2. **Storage-Kosten:** Unkontrollierter Upload kann Kosten verursachen
+3. **Rechtliche Probleme:** Urheberrechtsverletzungen, DSGVO-Verstöße
+4. **Datenbank-Verschmutzung:** Falsche Referenzen in experience_images
+5. **DDoS-Gefahr:** Massen-Upload Attacken möglich
+
+#### Lösungsansätze:
+1. **Bearer Token (Empfohlen):**
+   ```typescript
+   // Frontend sendet Token im Header
+   headers: { 'Authorization': `Bearer ${token}` }
+   // Backend verifiziert Token mit Supabase
+   ```
+
+2. **Session-Cookie Fix:**
+   - Problem mit multipart/form-data und Cookies lösen
+   - Alternative: Session-Token im FormData mitsenden
+
+3. **API-Key System:**
+   - Separater Admin-API-Key für Upload-Operationen
+   - Nur bekannte Keys erlauben
+
+#### Code-Stelle:
+```typescript
+// Zeile 33-35 in route.ts
+// TODO: Auth über Bearer Token oder andere Methode implementieren
+console.log('[IMAGE UPLOAD v4 - SERVICE] WARNING: Skipping auth check temporarily for testing')
+```
+
+**WICHTIG:** Diese Lücke MUSS vor Production-Release geschlossen werden!
 
 ## 📝 Nächste Schritte / TODOs
 
 ### Priorität Hoch
+- [ ] **🔴 SICHERHEITSLÜCKE BEHEBEN: Auth-Check für Image-Upload wiederherstellen**
 - [ ] Checkout/Bezahlprozess implementieren
 - [ ] Stripe/PayPal Integration
 - [ ] Gutschein-Einlösung
